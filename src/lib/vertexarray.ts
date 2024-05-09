@@ -14,8 +14,6 @@ export class VertexArray {
     this.gl = gl;
   }
 
-  
-
   bind() {
     this.gl.bindVertexArray(this.vao);
   }

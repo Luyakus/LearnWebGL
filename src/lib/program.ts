@@ -1,4 +1,3 @@
-
 export class Program {
   program: WebGLProgram;
   constructor(

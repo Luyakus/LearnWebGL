@@ -1,5 +1,4 @@
 import { Program } from "./program";
-import { Texture } from "./texture";
 import { VertexArray } from "./vertexarray";
 
 abstract class Item {
@@ -26,41 +25,6 @@ abstract class Item {
     }
   }
 }
-
-// export class TextureItem extends Item {
-//   constructor(
-//     public name: string,
-//     public index: number,
-//     public texture: Texture
-//   ) {
-//     super();
-//     this.name = name;
-//     this.index = index;
-//     this.texture = texture;
-//   }
-
-//   attach(vao: VertexArray, program: Program, gl: WebGL2RenderingContext): void {
-//     super.attach(vao, program, gl);
-
-//   }
-
-//   apply() {
-//     super.apply();
-//     let program = this.program!;
-//     let gl = this.gl!;
-//     program.use();
-//     let textrueLocation = gl.getUniformLocation(program.program, this.name);
-//     gl.uniform1i(textrueLocation, this.index);
-//     this.active()
-//     program.unuse();
-//   }
-
-//   active() {
-//     let gl = this.gl!;
-//     gl.activeTexture(gl.TEXTURE0 + this.index);
-//     gl.bindTexture(gl.TEXTURE_2D, this.texture.texture);
-//   }
-// }
 
 export class UniformItem extends Item {
   constructor(
