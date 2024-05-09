@@ -5,11 +5,14 @@ import { cubeVertex, textureVertex } from "./cube";
 import { Texture } from "../../lib/texture";
 import png1 from "../../assets/1.png";
 import png2 from "../../assets/2.png";
+import png3 from "../../assets/3.png";
+
 import vertSrc from "./vert.glsl";
+import vertSrc1 from "../four/vert.glsl";
 import fragSrc from "./frag.glsl";
 import { Program } from "../../lib/program";
 import { Shader } from "../../lib/shader";
-import { BufferItem, TextureItem, UniformItem } from "../../lib/item";
+import { BufferItem, UniformItem } from "../../lib/item";
 
 Matrix.glMatrix.setMatrixArrayType(Float32Array);
 
@@ -23,6 +26,7 @@ export async function lessonFiveMain(canvas: HTMLCanvasElement) {
   canvas.height = canvas.clientHeight * 3;
   let image1 = await imageLoader(png1);
   let image2 = await imageLoader(png2);
+  let image3 = await imageLoader(png3);
 
   let angle = 0;
   let rotateVec3 = Matrix.vec3.create();
@@ -30,13 +34,17 @@ export async function lessonFiveMain(canvas: HTMLCanvasElement) {
 
   let vaos: VertexArray[] = [];
   let programs: Program[] = [];
+  let texture1 = new Texture(image1, gl);
+  let texture2 = new Texture(image2, gl);
+  let texture3 = new Texture(image3, gl);
+
   let matrixs: UniformItem[] = [];
 
   let n: 1 | 2 | 3 | 6 = 1;
   let positionStep = 18 * n;
   let coordStep = 12 * n;
 
-  for (let i = 0; i * positionStep < cubeVertex.length / 2; i++) {
+  for (let i = 0; i * positionStep < cubeVertex.length; i++) {
     let cubeEnd = positionStep * (i + 1);
     let subCube = cubeVertex.subarray(
       i * positionStep,
@@ -57,13 +65,8 @@ export async function lessonFiveMain(canvas: HTMLCanvasElement) {
 
     let vertexBuffer = new BufferItem("v_position", 3, subCube);
     let texcoordBuffer = new BufferItem("v_texcoord", 2, subCoord);
-    let image = cubeEnd > cubeVertex.length / 2 ? image1 : image1;
-    let textureItem = new TextureItem(
-      "u_image",
-      i,
-      new Texture(image, gl)
-    );
-
+    let textureItem = new UniformItem("u_image", i, gl.uniform1i);
+    textureItem.attach(vao, program, gl);
     let viewMat4 = Matrix.mat4.create();
     let vec3 = Matrix.vec3.create();
     Matrix.vec3.set(vec3, 0, 0, -3);
@@ -110,15 +113,79 @@ export async function lessonFiveMain(canvas: HTMLCanvasElement) {
     angle += 0.05;
 
     matrixs.forEach((item, index) => {
-        vaos[index].draw(programs[index], index == 0);
-    //   let mMat4 = Matrix.mat4.create();
-    //   Matrix.mat4.rotate(mMat4, mMat4, angle, rotateVec3);
-    //   item.data = mMat4;
-    //   item.apply();
+      let mMat4 = Matrix.mat4.create();
+      Matrix.mat4.rotate(mMat4, mMat4, angle, rotateVec3);
+      item.data = mMat4;
+      item.apply();
+      if (index % 3 === 0) {//0, 3
+        texture1.active(index);
+      } else if (index % 3 == 1) {// 1, 4
+        texture2.active(index);
+      } else { // 2, 5
+        texture3.active(index);
+      }
+      vaos[index].draw(programs[index], index == 0);
     });
-
     requestAnimationFrame(draw);
   }
-
   draw();
 }
+
+// export async function lessonFiveMain(canvas: HTMLCanvasElement) {
+//   let gl = canvas.getContext("webgl2");
+//   if (!gl) {
+//     console.log("获取 webgl 失败");
+//     return;
+//   }
+//   canvas.width = canvas.clientWidth * 3;
+//   canvas.height = canvas.clientHeight * 3;
+//   let image1 = await imageLoader(png1);
+//   let image2 = await imageLoader(png2);
+
+//   let vao1 = new VertexArray(3, gl);
+//   let program1 = new Program(
+//     new Shader(vertSrc1, gl.VERTEX_SHADER, gl).shader,
+//     new Shader(fragSrc, gl.FRAGMENT_SHADER, gl).shader,
+//     gl
+//   );
+//   let vBuffer1 = new BufferItem(
+//     "v_position",
+//     2,
+//     new Float32Array([-0.5, 0.5, 0.5, 0.5, -0.5, -0.5])
+//   );
+//   let tBuffer1 = new BufferItem(
+//     "v_texcoord",
+//     2,
+//     new Float32Array([0, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1])
+//   );
+//   let textureItem1 = new TextureItem("u_image", 1, new Texture(image2, gl));
+
+//   [vBuffer1, tBuffer1, textureItem1].forEach((item) => {
+//     item.attach(vao1, program1, gl);
+//     item.apply();
+//   });
+//   vao1.draw(program1);
+//   let vao2 = new VertexArray(3, gl);
+//   let program2 = new Program(
+//     new Shader(vertSrc1, gl.VERTEX_SHADER, gl).shader,
+//     new Shader(fragSrc, gl.FRAGMENT_SHADER, gl).shader,
+//     gl
+//   );
+//   let vBuffer2 = new BufferItem(
+//     "v_position",
+//     2,
+//     new Float32Array([-0.5 + 0.5, 0.5, 0.5 + 0.5, 0.5, -0.5 + 0.5, -0.5])
+//   );
+//   let tBuffer2 = new BufferItem(
+//     "v_texcoord",
+//     2,
+//     new Float32Array([0, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 0])
+//   );
+//   let textureItem2 = new TextureItem("u_image", 2, new Texture(image1, gl));
+
+//   [vBuffer2, tBuffer2, textureItem2].forEach(item => {
+//     item.attach(vao2, program2, gl);
+//     item.apply();
+//   })
+//   vao2.draw(program2, false);
+// }

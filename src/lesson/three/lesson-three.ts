@@ -9,7 +9,7 @@ import fragAngleSrc from "./frag.angle.glsl";
 import { VertexArray } from "../../lib/vertexarray";
 import { FrameBufferTexture, Texture } from "../../lib/texture";
 import { FrameBuffer } from "../../lib/framebuffer";
-import { BufferItem, TextureItem } from "../../lib/item";
+import { BufferItem, UniformItem } from "../../lib/item";
 
 export async function lessonThreeMain(canvas: HTMLCanvasElement) {
   let gl = canvas.getContext("webgl2");
@@ -48,9 +48,11 @@ export async function lessonThreeMain(canvas: HTMLCanvasElement) {
   texcoordBuffer.attach(vao, program, gl);
   texcoordBuffer.apply();
 
-  let textureItem = new TextureItem("u_image", 0, new Texture(image, gl));
+  let texture1 =  new Texture(image, gl);
+  let textureItem = new UniformItem("u_image", 0, gl.uniform1i);
   textureItem.attach(vao, program, gl);
   textureItem.apply();
+  texture1.active(0);
   vao.draw(program, true,frameBuffer);
 
   let program1 = new Program(
@@ -67,8 +69,8 @@ export async function lessonThreeMain(canvas: HTMLCanvasElement) {
   texcoordBuffer.attach(vao, program1, gl);
   texcoordBuffer.apply();
   textureItem.attach(vao, program1, gl);
-  textureItem.texture = frameBuffer.texture;
   textureItem.apply();
+  frameBuffer.texture.active(0);
   vao.draw(program1, true, frameBuffer1);
 
   let program2 = new Program(
@@ -81,7 +83,7 @@ export async function lessonThreeMain(canvas: HTMLCanvasElement) {
   texcoordBuffer.attach(vao, program2, gl);
   texcoordBuffer.apply();
   textureItem.attach(vao, program2, gl);
-  textureItem.texture = frameBuffer1.texture;
   textureItem.apply();
+  frameBuffer1.texture.active(0);
   vao.draw(program2);
 }

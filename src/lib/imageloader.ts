@@ -7,7 +7,7 @@ export async function imageLoader(
     image.onload = () => {
       resolve(image);
     };
-    image.onerror = (e) => {
+    image.onerror = () => {
       reject(new Error(`${src} 加载失败`));
     };
   });

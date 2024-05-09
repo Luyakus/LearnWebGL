@@ -8,6 +8,8 @@ export class Texture {
   ) {
     if (image instanceof WebGLTexture) {
       this.texture = image;
+      this.image = image;
+      this.gl = gl;
     } else {
       let texture = gl.createTexture();
       if (!texture) {
@@ -31,10 +33,16 @@ export class Texture {
         image
       );
       this.texture = texture;
+      this.image = image;
+      this.gl = gl;
     }
-    this.image = image;
-    this.gl = gl;
     gl.bindTexture(gl.TEXTURE_2D, null);
+  }
+
+  active(index: number) {
+    let gl = this.gl!;
+    gl.activeTexture(gl.TEXTURE0 + index);
+    gl.bindTexture(gl.TEXTURE_2D, this.texture);
   }
 }
 
@@ -69,5 +77,11 @@ export class FrameBufferTexture {
     this.texture = texture;
     this.gl = gl;
     gl.bindTexture(gl.TEXTURE_2D, null);
+  }
+
+  active(index: number) {
+    let gl = this.gl!;
+    gl.activeTexture(gl.TEXTURE0 + index);
+    gl.bindTexture(gl.TEXTURE_2D, this.texture);
   }
 }

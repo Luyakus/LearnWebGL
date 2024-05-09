@@ -7,7 +7,7 @@ import png1 from "../../assets/1.png";
 import png2 from "../../assets/2.png";
 import { imageLoader } from "../../lib/imageloader";
 import { Texture } from "../../lib/texture";
-import { BufferItem, TextureItem } from "../../lib/item";
+import { BufferItem, UniformItem } from "../../lib/item";
 
 export async function lessonFourMain(canvas: HTMLCanvasElement) {
   let gl = canvas.getContext("webgl2");
@@ -39,12 +39,16 @@ export async function lessonFourMain(canvas: HTMLCanvasElement) {
     2,
     new Float32Array([0, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 0])
   );
-  let textureItem1 = new TextureItem("u_image", 0, new Texture(image1, gl));
-  let textureItem2 = new TextureItem("u_image1", 1, new Texture(image2, gl));
+  let texture1 = new Texture(image1, gl);
+  let textureItem1 = new UniformItem("u_image", 0, gl.uniform1i);
+  let texture2 = new Texture(image2, gl);
+  let textureItem2 = new UniformItem("u_image1", 1, gl.uniform1i);
 
   [vertexBuffer, texcoordBuffer, textureItem1, textureItem2].forEach((item) => {
     item.attach(vao, program, gl);
     item.apply();
   });
+  texture1.active(0);
+  texture2.active(1);
   vao.draw(program);
 }
