@@ -8,6 +8,7 @@ import vertSrc from "./vert.glsl";
 import fragSrc from "./frag.glsl";
 import { Program } from "../../lib/program";
 import { Shader } from "../../lib/shader";
+import { BufferItem, TextureItem, UniformItem } from "../../lib/item";
 
 Matrix.glMatrix.setMatrixArrayType(Float32Array);
 
@@ -21,7 +22,16 @@ export async function lessonFiveMain(canvas: HTMLCanvasElement) {
   canvas.height = canvas.clientHeight * 3;
   let image = await imageLoader(png);
 
+  let vao = new VertexArray(cubeVertex.length / 3, gl);
+  let program = new Program(
+    new Shader(vertSrc, gl.VERTEX_SHADER, gl).shader,
+    new Shader(fragSrc, gl.FRAGMENT_SHADER, gl).shader,
+    gl
+  );
 
+  let vertexBuffer = new BufferItem("v_position", 3, cubeVertex);
+  let texcoordBuffer = new BufferItem("v_texcoord", 2, textureVertex);
+  let textureItem = new TextureItem("u_image", 0, new Texture(image, gl));
 
   let viewMat4 = Matrix.mat4.create();
   let vec3 = Matrix.vec3.create();
@@ -37,60 +47,41 @@ export async function lessonFiveMain(canvas: HTMLCanvasElement) {
     100
   );
 
-  let vao = VertexArray.create(gl, cubeVertex.length / 3)
-    .applyItem(
-      {
-        buffer: {
-          name: "v_position",
-          data: cubeVertex,
-          width: 3,
-        },
-      },
-      {
-        buffer: {
-          name: "v_texcoord",
-          data: textureVertex,
-          width: 2,
-        },
-      },
-      {
-        texture: {
-          name: "u_image",
-          data: new Texture(image, gl),
-        },
-      }
-    )
-    .bind(
-      new Program(
-        new Shader(vertSrc, gl.VERTEX_SHADER, gl).shader,
-        new Shader(fragSrc, gl.FRAGMENT_SHADER, gl).shader,
-        gl
-      )
-    );
-  let angle = 0.1
+  let pvMat4 = Matrix.mat4.create();
+  Matrix.mat4.multiply(pvMat4, projectMat4, viewMat4);
+  let pvMatrixItem = new UniformItem("pv_mat4", pvMat4, (location, value) => {
+    gl.uniformMatrix4fv(location, false, value);
+  });
+
+  let angle = 0;
+  let mMat4 = Matrix.mat4.create();
+  let rotateVec3 = Matrix.vec3.create();
+  Matrix.vec3.set(rotateVec3, 1, 1, 1);
+  Matrix.mat4.rotate(mMat4, mMat4, angle, rotateVec3);
+  let mMatrixItem = new UniformItem("m_mat4", mMat4, (location, value) => {
+    gl.uniformMatrix4fv(location, false, value);
+  });
+
+  [
+    vertexBuffer,
+    texcoordBuffer,
+    textureItem,
+    pvMatrixItem,
+    mMatrixItem,
+  ].forEach((item) => {
+    item.attach(vao, program, gl);
+    item.apply();
+  });
 
   function draw() {
-    angle += 0.05;
-    let modelMat4 = Matrix.mat4.create();
-    let rotateVec3 = Matrix.vec3.create();
-    Matrix.vec3.set(rotateVec3, 1, 1, 1);
-    Matrix.mat4.rotate(modelMat4, modelMat4, angle, rotateVec3);
-
-    let mat4 = Matrix.mat4.create();
-    Matrix.mat4.multiply(mat4, viewMat4, modelMat4);
-    Matrix.mat4.multiply(mat4, projectMat4, mat4);
-
-    vao.applyItem({
-      uniform: {
-        name: "v_mat4",
-        data: mat4,
-        setter: function (location, value) {
-          gl!.uniformMatrix4fv(location, false, value);
-        },
-      },
-    }).draw();
-    // requestAnimationFrame(draw);
+    angle += 0.1;
+    let mMat4 = Matrix.mat4.create();
+    Matrix.mat4.rotate(mMat4, mMat4, angle, rotateVec3);
+    mMatrixItem.data = mMat4;
+    mMatrixItem.apply();
+    vao.draw(program);
+    requestAnimationFrame(draw);
   }
 
-  draw()
+  draw();
 }
