@@ -51,7 +51,7 @@ export async function lessonThreeMain(canvas: HTMLCanvasElement) {
   let textureItem = new TextureItem("u_image", 0, new Texture(image, gl));
   textureItem.attach(vao, program, gl);
   textureItem.apply();
-  vao.draw(program, frameBuffer);
+  vao.draw(program, true,frameBuffer);
 
   let program1 = new Program(
     new Shader(vertSrc, gl.VERTEX_SHADER, gl).shader,
@@ -69,7 +69,7 @@ export async function lessonThreeMain(canvas: HTMLCanvasElement) {
   textureItem.attach(vao, program1, gl);
   textureItem.texture = frameBuffer.texture;
   textureItem.apply();
-  vao.draw(program1, frameBuffer1);
+  vao.draw(program1, true, frameBuffer1);
 
   let program2 = new Program(
     new Shader(vertSrc, gl.VERTEX_SHADER, gl).shader,

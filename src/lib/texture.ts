@@ -1,6 +1,7 @@
 export class Texture {
   texture: WebGLTexture;
   gl: WebGL2RenderingContext;
+  image?: HTMLImageElement | WebGLTexture;
   constructor(
     image: HTMLImageElement | WebGLTexture,
     gl: WebGL2RenderingContext
@@ -31,7 +32,7 @@ export class Texture {
       );
       this.texture = texture;
     }
-
+    this.image = image;
     this.gl = gl;
     gl.bindTexture(gl.TEXTURE_2D, null);
   }

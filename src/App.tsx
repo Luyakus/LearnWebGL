@@ -10,7 +10,7 @@ function LessonOverview() {
   const navigate = useNavigate();
   return (
     <div className="h-screen w-screen flex flex-row flex-wrap gap-4 content-start">
-      <div
+      {/* <div
         className="w-[500px] h-[282px]"
         onClick={() => {
           navigate("/lesson-one");
@@ -41,7 +41,7 @@ function LessonOverview() {
         }}
       >
         <LessonTemplate render={lessonFourMain} desc="多个纹理" />
-      </div>
+      </div> */}
       <div
         className="w-[500px] h-[282px]"
         onClick={() => {

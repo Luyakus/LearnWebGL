@@ -41,16 +41,14 @@ export class TextureItem extends Item {
 
   apply() {
     super.apply();
-    let vao = this.vao!;
     let program = this.program!;
     let gl = this.gl!;
-    vao.bind();
     program.use();
+    let textrueLocation = gl.getUniformLocation(program.program, this.name);
     gl.activeTexture(gl.TEXTURE0 + this.index);
     gl.bindTexture(gl.TEXTURE_2D, this.texture.texture);
-    let textrueLocation = gl.getUniformLocation(program.program, this.name);
     gl.uniform1i(textrueLocation, this.index);
-    vao.unbind();
+    console.log(textrueLocation, this.index, this.texture.image);
     program.unuse();
   }
 }
@@ -68,14 +66,11 @@ export class UniformItem extends Item {
 
   apply() {
     super.apply();
-    let vao = this.vao!;
     let program = this.program!;
     let gl = this.gl!;
-    vao.bind();
     program.use();
     let location = gl.getUniformLocation(program.program, this.name);
     this.setter.call(this.gl, location, this.data);
-    vao.unbind();
     program.unuse();
   }
 }

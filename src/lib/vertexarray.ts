@@ -3,7 +3,7 @@ import { Program } from "./program";
 
 export class VertexArray {
   vao: WebGLVertexArrayObject;
-  
+
   constructor(public vertexCount: number, public gl: WebGL2RenderingContext) {
     let vao = gl.createVertexArray();
     if (!vao) {
@@ -13,7 +13,7 @@ export class VertexArray {
     this.vao = vao;
     this.gl = gl;
   }
- 
+
   bind() {
     this.gl.bindVertexArray(this.vao);
   }
@@ -22,18 +22,22 @@ export class VertexArray {
     this.gl.bindVertexArray(null);
   }
 
-  draw(program: Program, frameBuffer?: FrameBuffer) {
-    program.use();
+  draw(program: Program, clear: boolean = true, frameBuffer?: FrameBuffer) {
     this.bind();
+    program.use();
     this.gl.enable(this.gl.DEPTH_TEST);
     if (frameBuffer) {
       frameBuffer.bind();
-      this.gl.clearColor(0.1, 0.2, 0.3, 1);
-      this.gl.clear(this.gl.DEPTH_BUFFER_BIT | this.gl.COLOR_BUFFER_BIT);
+      if (clear) {
+        this.gl.clearColor(0.1, 0.2, 0.3, 1);
+        this.gl.clear(this.gl.DEPTH_BUFFER_BIT | this.gl.COLOR_BUFFER_BIT);
+      }
       this.gl.drawArrays(this.gl.TRIANGLES, 0, this.vertexCount);
     } else {
-      this.gl.clearColor(0.1, 0.2, 0.3, 1);
-      this.gl.clear(this.gl.DEPTH_BUFFER_BIT | this.gl.COLOR_BUFFER_BIT);
+      if (clear) {
+        this.gl.clearColor(0.1, 0.2, 0.3, 1);
+        this.gl.clear(this.gl.DEPTH_BUFFER_BIT | this.gl.COLOR_BUFFER_BIT);
+      }
       this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
       this.gl.drawArrays(this.gl.TRIANGLES, 0, this.vertexCount);
     }
