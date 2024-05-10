@@ -5,6 +5,7 @@ import { lessonOneMain } from "./lesson/one/lesson-one";
 import { lessonThreeMain } from "./lesson/three/lesson-three";
 import { lessonFourMain } from "./lesson/four/lesson-four";
 import { lessonFiveMain } from "./lesson/five/lesson-five";
+import { lessonSixMain } from "./lesson/six/lesson-six";
 
 function LessonOverview() {
   const navigate = useNavigate();
@@ -50,6 +51,14 @@ function LessonOverview() {
       >
         <LessonTemplate render={lessonFiveMain} desc="三维立方体" />
       </div>
+      <div
+        className="w-[500px] h-[282px]"
+        onClick={() => {
+          navigate("/lesson-six");
+        }}
+      >
+        <LessonTemplate render={lessonSixMain} desc="摄像机" />
+      </div>
     </div>
   );
 }
@@ -79,6 +88,10 @@ function App() {
           <Route
             path="/lesson-five"
             element={<LessonTemplate render={lessonFiveMain} />}
+          />
+           <Route
+            path="/lesson-six"
+            element={<LessonTemplate render={lessonSixMain} />}
           />
         </Routes>
       </BrowserRouter>

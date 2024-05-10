@@ -1,7 +1,7 @@
 import * as Matrix from "gl-matrix";
 import { imageLoader } from "../../lib/imageloader";
 import { VertexArray } from "../../lib/vertexarray";
-import { cubeVertex, textureVertex } from "./cube";
+import { cubeVertex, textureVertex } from "../cube";
 import { Texture } from "../../lib/texture";
 import png1 from "../../assets/1.png";
 import png2 from "../../assets/2.png";
