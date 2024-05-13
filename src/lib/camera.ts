@@ -74,7 +74,7 @@ export class Camera {
   }
 
   move(interval: number) {
-    let speed = interval * 2.5;
+    let speed = interval * 1;
     if (this.keys.includes("w")) {
       let up = vec3.create();
       vec3.add(

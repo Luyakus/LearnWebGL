@@ -102,13 +102,13 @@ export async function lessonSixMain(canvas: HTMLCanvasElement) {
     vMatrixItem.data = camera.cameraMatrix();
     vMatrixItem.apply();
 
-    mMatrixItem.apply()
+    mMatrixItem.apply();
     vao.draw(program);
 
-    mMatrixItem1.apply()
+    mMatrixItem1.apply();
     vao.draw(program, false);
 
-    mMatrixItem2.apply()
+    mMatrixItem2.apply();
     vao.draw(program, false);
     lastime = time;
     requestAnimationFrame(draw);

@@ -6,59 +6,74 @@ import { lessonThreeMain } from "./lesson/three/lesson-three";
 import { lessonFourMain } from "./lesson/four/lesson-four";
 import { lessonFiveMain } from "./lesson/five/lesson-five";
 import { lessonSixMain } from "./lesson/six/lesson-six";
+import { lessonSevenMain } from "./lesson/seven/lesson-seven";
+import { lessonEightMain } from "./lesson/eight/lesson-eight";
+
+interface RouteItem {
+  render: (canvas: HTMLCanvasElement) => void;
+  path: string;
+  title: string;
+}
+
+const routes: RouteItem[] = [
+  {
+    render: lessonOneMain,
+    path: "/lesson-one",
+    title: "简单使用 webgl2",
+  },
+  {
+    render: lessonTwoMain,
+    path: "/lesson-two",
+    title: "加载纹理",
+  },
+  {
+    render: lessonThreeMain,
+    path: "/lesson-three",
+    title: "滤镜",
+  },
+  {
+    render: lessonFourMain,
+    path: "/lesson-four",
+    title: "多个纹理",
+  },
+  {
+    render: lessonFiveMain,
+    path: "/lesson-five",
+    title: "多个 program 使用多个纹理",
+  },
+  {
+    render: lessonSixMain,
+    path: "/lesson-one",
+    title: "摄像机",
+  },
+  {
+    render: lessonSevenMain,
+    path: "/lesson-seven",
+    title: "简单的光照场景",
+  },
+  {
+    render: lessonEightMain,
+    path: "/lesson-eight",
+    title: "光照+材质",
+  },
+];
 
 function LessonOverview() {
   const navigate = useNavigate();
   return (
     <div className="h-screen w-screen flex flex-row flex-wrap gap-4 content-start">
-      <div
-        className="w-[500px] h-[282px]"
-        onClick={() => {
-          navigate("/lesson-one");
-        }}
-      >
-        <LessonTemplate render={lessonOneMain} desc="简单使用 webgl2" />
-      </div>
-      <div
-        className="w-[500px] h-[282px]"
-        onClick={() => {
-          navigate("/lesson-two");
-        }}
-      >
-        <LessonTemplate render={lessonTwoMain} desc="加载纹理" />
-      </div>
-      <div
-        className="w-[500px] h-[282px]"
-        onClick={() => {
-          navigate("/lesson-three");
-        }}
-      >
-        <LessonTemplate render={lessonThreeMain} desc="滤镜" />
-      </div>
-      <div
-        className="w-[500px] h-[282px]"
-        onClick={() => {
-          navigate("/lesson-four");
-        }}
-      >
-        <LessonTemplate render={lessonFourMain} desc="多个纹理" />
-      </div>
-      <div
-        className="w-[500px] h-[282px]"
-        onClick={() => {
-          navigate("/lesson-five");
-        }}
-      >
-        <LessonTemplate render={lessonFiveMain} desc="三维立方体" />
-      </div>
-      <div
-        className="w-[500px] h-[282px]"
-        onClick={() => {
-          navigate("/lesson-six");
-        }}
-      >
-        <LessonTemplate render={lessonSixMain} desc="摄像机" />
-      </div>
+      {routes.map((route) => {
+        return (
+          <div
+            className="w-[500px] h-[282px]"
+            onClick={() => {
+              navigate(route.path);
+            }}
+          >
+            <LessonTemplate render={route.render} desc={route.title} />
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -69,30 +84,12 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LessonOverview />} />
-          <Route
-            path="/lesson-one"
-            element={<LessonTemplate render={lessonOneMain} />}
-          />
-          <Route
-            path="/lesson-two"
-            element={<LessonTemplate render={lessonTwoMain} />}
-          />
-          <Route
-            path="/lesson-three"
-            element={<LessonTemplate render={lessonThreeMain} />}
-          />
-          <Route
-            path="/lesson-four"
-            element={<LessonTemplate render={lessonFourMain} />}
-          />
-          <Route
-            path="/lesson-five"
-            element={<LessonTemplate render={lessonFiveMain} />}
-          />
-           <Route
-            path="/lesson-six"
-            element={<LessonTemplate render={lessonSixMain} />}
-          />
+          {...routes.map((route) => (
+            <Route
+              path={route.path}
+              element={<LessonTemplate render={route.render} />}
+            />
+          ))}
         </Routes>
       </BrowserRouter>
     </div>
