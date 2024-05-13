@@ -1,4 +1,4 @@
-import { mat4, vec3, vec4 } from "gl-matrix";
+import { mat4, vec3 } from "gl-matrix";
 import { BufferItem, UniformItem } from "../../lib/item";
 import { cubeVertex, directVertex } from "../cube";
 import { Program } from "../../lib/program";
@@ -56,9 +56,13 @@ export function lessonEightMain(canvas: HTMLCanvasElement) {
   );
 
   let vMatrix1 = mat4.create();
-  let vMatrixItem1 = new UniformItem("v_matrix", vMatrix1, (location, value) => {
-    gl.uniformMatrix4fv(location, false, value);
-  });
+  let vMatrixItem1 = new UniformItem(
+    "v_matrix",
+    vMatrix1,
+    (location, value) => {
+      gl.uniformMatrix4fv(location, false, value);
+    }
+  );
 
   let vMatrix2 = mat4.create();
   let vMatrixItem2 = new UniformItem(
@@ -100,6 +104,48 @@ export function lessonEightMain(canvas: HTMLCanvasElement) {
     gl.uniform3fv
   );
 
+  let materialAmbItem = new UniformItem(
+    "material.ambient",
+    vec3.set(vec3.create(), 1, 0.5, 0.31),
+    gl.uniform3fv
+  );
+
+  let materialDiffItem = new UniformItem(
+    "material.diffuse",
+    vec3.set(vec3.create(), 1, 0.5, 0.31),
+    gl.uniform3fv
+  );
+
+  let materialSpecItem = new UniformItem(
+    "material.specular",
+    vec3.set(vec3.create(), 0.5, 0.5, 0.5),
+    gl.uniform3fv
+  );
+
+  let materialShinItem = new UniformItem(
+    "material.shininess",
+    32,
+    gl.uniform1f
+  );
+
+  let lightAmbItem = new UniformItem(
+    "light.ambient",
+    vec3.set(vec3.create(), 0.2, 0.2, 0.2),
+    gl.uniform3fv
+  );
+
+  let lightDiffItem = new UniformItem(
+    "light.diffuse",
+    vec3.set(vec3.create(), 0.5, 0.5, 0.5),
+    gl.uniform3fv
+  );
+
+  let lightSpecItem = new UniformItem(
+    "light.specular",
+    vec3.set(vec3.create(), 1, 1, 1),
+    gl.uniform3fv
+  );
+
   let program1 = new Program(
     new Shader(objVertSrc, gl.VERTEX_SHADER, gl).shader,
     new Shader(objFragSrc, gl.FRAGMENT_SHADER, gl).shader,
@@ -136,6 +182,19 @@ export function lessonEightMain(canvas: HTMLCanvasElement) {
   lightItem.attach(vao, program1, gl);
   lightItem.apply();
 
+  [
+    materialAmbItem,
+    materialDiffItem,
+    materialSpecItem,
+    materialShinItem,
+    lightAmbItem,
+    lightDiffItem,
+    lightSpecItem,
+  ].forEach((item) => {
+    item.attach(vao, program1, gl);
+    item.apply();
+  });
+
   cameraPositionItem.attach(vao, program1, gl);
 
   // 画光源
@@ -157,7 +216,7 @@ export function lessonEightMain(canvas: HTMLCanvasElement) {
     camera.move((time - lastime) / 1000);
 
     let mMatrix = mat4.create();
-    mat4.rotate(mMatrix, mMatrix, angle, vec3.set(vec3.create(), 1, 1, 0))
+    mat4.rotate(mMatrix, mMatrix, angle, vec3.set(vec3.create(), 1, 1, 0));
     mMatrixItem1.data = mMatrix;
     mMatrixItem1.apply();
 
@@ -166,14 +225,27 @@ export function lessonEightMain(canvas: HTMLCanvasElement) {
 
     cameraPositionItem.data = camera.position;
     cameraPositionItem.apply();
+
+    lightColorItem.data = vec3.set(
+      vec3.create(),
+      Math.sin(angle),
+      Math.cos(angle),
+      Math.sin(angle * 10)
+    );
+    lightColorItem.attach(vao, program1, gl!);
+    lightColorItem.apply();
     vao.draw(program1);
 
     vMatrixItem2.attach(vao, program2, gl!);
     vMatrixItem2.data = camera.cameraMatrix();
     vMatrixItem2.apply();
+
+    lightColorItem.attach(vao, program2, gl!);
+    lightColorItem.apply();
+
     vao.draw(program2, false);
     lastime = time;
-    angle += 0.05
+    angle += 0.01;
     requestAnimationFrame(draw);
   }
   draw(0);

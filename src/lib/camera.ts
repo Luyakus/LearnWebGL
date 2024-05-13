@@ -18,7 +18,7 @@ export class Camera {
     let listener = this.listenMouse.bind(this);
     document.addEventListener(
       "pointerlockchange",
-      (ev) => {
+      () => {
         if (document.pointerLockElement === canvas) {
           canvas.addEventListener("mousemove", listener);
         } else {
