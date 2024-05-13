@@ -86,7 +86,7 @@ export function lessonEightMain(canvas: HTMLCanvasElement) {
   });
 
   let objColor = vec3.create();
-  vec3.set(objColor, 1, 0.5, 0.31);
+  vec3.set(objColor, 1, 1, 1);
   let objColorItem = new UniformItem("obj_color", objColor, gl.uniform3fv);
 
   let lightColor = vec3.create();
@@ -106,37 +106,37 @@ export function lessonEightMain(canvas: HTMLCanvasElement) {
 
   let materialAmbItem = new UniformItem(
     "material.ambient",
-    vec3.set(vec3.create(), 1, 0.5, 0.31),
+    vec3.set(vec3.create(), 0.0, 0.1, 0.06),
     gl.uniform3fv
   );
 
   let materialDiffItem = new UniformItem(
     "material.diffuse",
-    vec3.set(vec3.create(), 1, 0.5, 0.31),
+    vec3.set(vec3.create(),  0.0, 0.50980392, 0.50980392),
     gl.uniform3fv
   );
 
   let materialSpecItem = new UniformItem(
     "material.specular",
-    vec3.set(vec3.create(), 0.5, 0.5, 0.5),
+    vec3.set(vec3.create(), 0.50196078, 0.50196078, 0.50196078),
     gl.uniform3fv
   );
 
   let materialShinItem = new UniformItem(
     "material.shininess",
-    32,
+    256,
     gl.uniform1f
   );
 
   let lightAmbItem = new UniformItem(
     "light.ambient",
-    vec3.set(vec3.create(), 0.2, 0.2, 0.2),
+    vec3.set(vec3.create(), 1, 1, 1),
     gl.uniform3fv
   );
 
   let lightDiffItem = new UniformItem(
     "light.diffuse",
-    vec3.set(vec3.create(), 0.5, 0.5, 0.5),
+    vec3.set(vec3.create(), 1, 1, 1),
     gl.uniform3fv
   );
 
@@ -226,11 +226,12 @@ export function lessonEightMain(canvas: HTMLCanvasElement) {
     cameraPositionItem.data = camera.position;
     cameraPositionItem.apply();
 
+    let value = 1;// Math.max(0.5, Math.sin(angle));
     lightColorItem.data = vec3.set(
       vec3.create(),
-      Math.sin(angle),
-      Math.cos(angle),
-      Math.sin(angle * 10)
+      value,
+      value,
+      value
     );
     lightColorItem.attach(vao, program1, gl!);
     lightColorItem.apply();

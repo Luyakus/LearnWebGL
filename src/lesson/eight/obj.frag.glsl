@@ -38,7 +38,7 @@ void main() {
 
     vec3 view_dir = normalize(v_camera_position - a_frag_position);
     vec3 reflect_dir = reflect(-light_dir, norm);
-    float spec = pow(max(dot(view_dir, reflect_dir), 0.0f), 32.0f);
+    float spec = pow(max(dot(view_dir, reflect_dir), 0.0f), material.shininess);
     vec3 spec_color = spec * material.specular * light.specular * light_color;
 
     vec3 color = ambient_color + diff_color + spec_color;
