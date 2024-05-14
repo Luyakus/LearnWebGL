@@ -1,6 +1,6 @@
 import { mat4, vec3 } from "gl-matrix";
 import { BufferItem, UniformItem } from "../../lib/item";
-import { cubeVertex, directVertex, textureVertex } from "../cube";
+import { cubeVertex, directVertex, textureVertex, cubePosition } from "../cube";
 import { Program } from "../../lib/program";
 import { Shader } from "../../lib/shader";
 
@@ -17,7 +17,7 @@ import { Texture } from "../../lib/texture";
 import png1 from "../../assets/4.png";
 import png2 from "../../assets/5.png";
 import { imageLoader } from "../../lib/imageloader";
-export async function lessonNineMain(canvas: HTMLCanvasElement) {
+export async function lessonElevenMain(canvas: HTMLCanvasElement) {
   let gl = canvas.getContext("webgl2");
   if (!gl) {
     console.log("获取 webgl 失败");
@@ -43,7 +43,7 @@ export async function lessonNineMain(canvas: HTMLCanvasElement) {
   );
 
   let lightPosition = vec3.create();
-  vec3.set(lightPosition, 1.2, 1.0, 10.0);
+  vec3.set(lightPosition, 0, 1, 3);
   let lightItem = new UniformItem(
     "v_light_position",
     lightPosition,
@@ -139,6 +139,24 @@ export async function lessonNineMain(canvas: HTMLCanvasElement) {
     gl.uniform3fv
   );
 
+  let lightConstantItem = new UniformItem(
+    "light.constant",
+    1,
+    gl.uniform1f
+  );
+
+  let lightLinearItem = new UniformItem(
+    "light.linear",
+    0.09,
+    gl.uniform1f
+  );
+
+  let lightQuadraticItem = new UniformItem(
+    "light.quadratic",
+    0.02,
+    gl.uniform1f
+  );
+
   let program1 = new Program(
     new Shader(objVertSrc, gl.VERTEX_SHADER, gl).shader,
     new Shader(objFragSrc, gl.FRAGMENT_SHADER, gl).shader,
@@ -182,6 +200,9 @@ export async function lessonNineMain(canvas: HTMLCanvasElement) {
     lightAmbItem,
     lightDiffItem,
     lightSpecItem,
+    lightConstantItem,
+    lightLinearItem,
+    lightQuadraticItem
   ].forEach((item) => {
     item.attach(vao, program1, gl);
     item.apply();
@@ -209,26 +230,26 @@ export async function lessonNineMain(canvas: HTMLCanvasElement) {
   function draw(time: number) {
     camera.move((time - lastime) / 1000);
 
-    let mMatrix = mat4.create();
-    mat4.rotate(mMatrix, mMatrix, angle, vec3.set(vec3.create(), 1, 1, 0));
-    mMatrixItem1.data = mMatrix;
-    mMatrixItem1.apply();
-
-    vMatrixItem1.data = camera.cameraMatrix();
-    vMatrixItem1.apply();
-
-    cameraPositionItem.data = camera.position;
-    cameraPositionItem.apply();
-
-    texture1.active(1);
-    texture2.active(2);
-    vao.draw(program1);
-
     vMatrixItem2.attach(vao, program2, gl!);
     vMatrixItem2.data = camera.cameraMatrix();
     vMatrixItem2.apply();
+    vao.draw(program2);
+    // return;
+    vMatrixItem1.data = camera.cameraMatrix();
+    vMatrixItem1.apply();
+    cameraPositionItem.data = camera.position;
+    cameraPositionItem.apply();
+    texture1.active(1);
+    texture2.active(2);
 
-    vao.draw(program2, false);
+    cubePosition.forEach((position, index) => {
+      let mMatrix = mat4.create();
+      mat4.rotate(mMatrix, mMatrix, angle * index, vec3.set(vec3.create(), 1, 1, 0));
+      mat4.translate(mMatrix, mMatrix, position);
+      mMatrixItem1.data = mMatrix;
+      mMatrixItem1.apply();
+      vao.draw(program1, false);
+    });
     lastime = time;
     angle += 0.01;
     requestAnimationFrame(draw);

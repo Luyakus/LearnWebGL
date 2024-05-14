@@ -1,3 +1,5 @@
+import { vec3 } from "gl-matrix";
+
 export const cubeVertex = new Float32Array([
   -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5,
   -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5,
@@ -27,3 +29,16 @@ export const directVertex = new Float32Array([
   -1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0,
   1.0, 0.0, 0.0, 1.0, 0.0,
 ]);
+
+export const cubePosition = [
+  vec3.set(vec3.create(), 0, 0, 0),
+  vec3.set(vec3.create(), 2.0, 5.0, -15.0),
+  vec3.set(vec3.create(), -1.5, -2.2, -2.5),
+  vec3.set(vec3.create(), -3.8, -2.0, -12.3),
+  vec3.set(vec3.create(), 2.4, -0.4, -3.5),
+  vec3.set(vec3.create(), -1.7, 3.0, -7.5),
+  vec3.set(vec3.create(), 1.3, -2.0, -2.5),
+  vec3.set(vec3.create(), 1.5, 2.0, -2.5),
+  vec3.set(vec3.create(), 1.5, 0.2, -1.5),
+  vec3.set(vec3.create(), -1.3, 1.0, -1.5),
+];

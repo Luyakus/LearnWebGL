@@ -1,14 +1,11 @@
 import { mat4, vec3 } from "gl-matrix";
 import { BufferItem, UniformItem } from "../../lib/item";
-import { cubeVertex, directVertex, textureVertex } from "../cube";
+import { cubeVertex, directVertex, textureVertex, cubePosition } from "../cube";
 import { Program } from "../../lib/program";
 import { Shader } from "../../lib/shader";
 
 import objVertSrc from "./obj.vert.glsl";
 import objFragSrc from "./obj.frag.glsl";
-
-import lightVertSrc from "./light.vert.glsl";
-import lightFragSrc from "./light.frag.glsl";
 
 import { VertexArray } from "../../lib/vertexarray";
 import { Camera } from "../../lib/camera";
@@ -17,7 +14,8 @@ import { Texture } from "../../lib/texture";
 import png1 from "../../assets/4.png";
 import png2 from "../../assets/5.png";
 import { imageLoader } from "../../lib/imageloader";
-export async function lessonNineMain(canvas: HTMLCanvasElement) {
+
+export async function lessonTenMain(canvas: HTMLCanvasElement) {
   let gl = canvas.getContext("webgl2");
   if (!gl) {
     console.log("获取 webgl 失败");
@@ -42,24 +40,13 @@ export async function lessonNineMain(canvas: HTMLCanvasElement) {
     }
   );
 
-  let lightPosition = vec3.create();
-  vec3.set(lightPosition, 1.2, 1.0, 10.0);
+  let lightDirection = vec3.create();
+  vec3.set(lightDirection, 1, 1, -5);
   let lightItem = new UniformItem(
-    "v_light_position",
-    lightPosition,
+    "v_light_direction",
+    lightDirection,
     (location, value) => {
       gl.uniform3f(location, value[0], value[1], value[2]);
-    }
-  );
-
-  let mMatrix2 = mat4.create();
-  mat4.translate(mMatrix2, mMatrix2, lightPosition);
-  mat4.scale(mMatrix2, mMatrix2, vec3.set(vec3.create(), 0.2, 0.2, 0.2));
-  let mMatrixItem2 = new UniformItem(
-    "m_matrix",
-    mMatrix2,
-    (location, value) => {
-      gl.uniformMatrix4fv(location, false, value);
     }
   );
 
@@ -67,15 +54,6 @@ export async function lessonNineMain(canvas: HTMLCanvasElement) {
   let vMatrixItem1 = new UniformItem(
     "v_matrix",
     vMatrix1,
-    (location, value) => {
-      gl.uniformMatrix4fv(location, false, value);
-    }
-  );
-
-  let vMatrix2 = mat4.create();
-  let vMatrixItem2 = new UniformItem(
-    "v_matrix",
-    vMatrix2,
     (location, value) => {
       gl.uniformMatrix4fv(location, false, value);
     }
@@ -145,12 +123,6 @@ export async function lessonNineMain(canvas: HTMLCanvasElement) {
     gl
   );
 
-  let program2 = new Program(
-    new Shader(lightVertSrc, gl.VERTEX_SHADER, gl).shader,
-    new Shader(lightFragSrc, gl.FRAGMENT_SHADER, gl).shader,
-    gl
-  );
-
   let vao = new VertexArray(cubeVertex.length / 3, gl);
 
   // 画物体
@@ -188,19 +160,6 @@ export async function lessonNineMain(canvas: HTMLCanvasElement) {
   });
 
   cameraPositionItem.attach(vao, program1, gl);
-  // 画光源
-  cubeBufferItem.attach(vao, program2, gl);
-  cubeBufferItem.apply();
-
-  mMatrixItem2.attach(vao, program2, gl);
-  mMatrixItem2.apply();
-
-  pMatrixItem.attach(vao, program2, gl);
-  pMatrixItem.apply();
-
-  lightColorItem.attach(vao, program2, gl!);
-  lightColorItem.apply();
-
   vMatrixItem1.attach(vao, program1, gl!);
 
   let angle = 0;
@@ -208,12 +167,6 @@ export async function lessonNineMain(canvas: HTMLCanvasElement) {
   let camera = new Camera(canvas);
   function draw(time: number) {
     camera.move((time - lastime) / 1000);
-
-    let mMatrix = mat4.create();
-    mat4.rotate(mMatrix, mMatrix, angle, vec3.set(vec3.create(), 1, 1, 0));
-    mMatrixItem1.data = mMatrix;
-    mMatrixItem1.apply();
-
     vMatrixItem1.data = camera.cameraMatrix();
     vMatrixItem1.apply();
 
@@ -222,13 +175,16 @@ export async function lessonNineMain(canvas: HTMLCanvasElement) {
 
     texture1.active(1);
     texture2.active(2);
-    vao.draw(program1);
 
-    vMatrixItem2.attach(vao, program2, gl!);
-    vMatrixItem2.data = camera.cameraMatrix();
-    vMatrixItem2.apply();
+    cubePosition.forEach((position, index) => {
+        let mMatrix = mat4.create();
+        mat4.rotate(mMatrix, mMatrix, angle * index, vec3.set(vec3.create(), 1, 1, 0));
+        mat4.translate(mMatrix, mMatrix, position);
+        mMatrixItem1.data = mMatrix;
+        mMatrixItem1.apply();
+        vao.draw(program1, index === 0);
+    })
 
-    vao.draw(program2, false);
     lastime = time;
     angle += 0.01;
     requestAnimationFrame(draw);

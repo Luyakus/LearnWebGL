@@ -9,6 +9,8 @@ import { lessonSixMain } from "./lesson/six/lesson-six";
 import { lessonSevenMain } from "./lesson/seven/lesson-seven";
 import { lessonEightMain } from "./lesson/eight/lesson-eight";
 import { lessonNineMain } from "./lesson/nine/lesson-nine";
+import { lessonTenMain } from "./lesson/ten/lesson-ten";
+import { lessonElevenMain } from "./lesson/eleven/lesson-eleven";
 
 interface RouteItem {
   render: (canvas: HTMLCanvasElement) => void;
@@ -44,7 +46,7 @@ const routes: RouteItem[] = [
   },
   {
     render: lessonSixMain,
-    path: "/lesson-one",
+    path: "/lesson-six",
     title: "摄像机",
   },
   {
@@ -62,6 +64,16 @@ const routes: RouteItem[] = [
     path: "/lesson-nine",
     title: "光照贴图",
   },
+  {
+    render: lessonTenMain,
+    path: "/lesson-ten",
+    title: "投光物-平行光-多物体",
+  },
+  {
+    render: lessonElevenMain,
+    path: "/lesson-eleven",
+    title: "投光物-点光源衰减-多物体",
+  },
 ];
 
 function LessonOverview() {
@@ -71,6 +83,7 @@ function LessonOverview() {
       {routes.map((route) => {
         return (
           <div
+            key={route.path}
             className="w-[500px] h-[282px]"
             onClick={() => {
               navigate(route.path);
