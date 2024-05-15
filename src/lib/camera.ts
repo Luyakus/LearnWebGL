@@ -74,7 +74,7 @@ export class Camera {
   }
 
   move(interval: number) {
-    let speed = interval * 1;
+    let speed = interval * 2;
     if (this.keys.includes("w")) {
       let up = vec3.create();
       vec3.add(
@@ -87,7 +87,8 @@ export class Camera {
           this.front[2] * speed
         )
       );
-    } else if (this.keys.includes("s")) {
+    }
+    if (this.keys.includes("s")) {
       let down = vec3.create();
       vec3.subtract(
         this.position,
@@ -99,12 +100,14 @@ export class Camera {
           this.front[2] * speed
         )
       );
-    } else if (this.keys.includes("a")) {
+    }
+    if (this.keys.includes("a")) {
       let left: vec3 = vec3.create();
       vec3.normalize(left, vec3.cross(left, this.front, this.up));
       vec3.set(left, left[0] * speed, left[1] * speed, left[2] * speed);
       vec3.subtract(this.position, this.position, left);
-    } else if (this.keys.includes("d")) {
+    }
+    if (this.keys.includes("d")) {
       let right: vec3 = vec3.create();
       vec3.normalize(right, vec3.cross(right, this.front, this.up));
       vec3.set(right, right[0] * speed, right[1] * speed, right[2] * speed);

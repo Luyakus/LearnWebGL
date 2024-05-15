@@ -14,7 +14,7 @@ out vec2 a_texcoord;
 
 void main() {
     a_texcoord = v_texcoord;
-    a_normal = vec3(m_matrix * vec4(v_normal, 1));
+    a_normal = mat3(transpose(inverse(m_matrix))) * v_normal;
     a_frag_position = vec3(m_matrix * vec4(v_position, 1));
     gl_Position = p_matrix * v_matrix * vec4(a_frag_position, 1);
 }

@@ -170,7 +170,7 @@ export async function lessonTenMain(canvas: HTMLCanvasElement) {
     cubePosition.forEach((position, index) => {
         let mMatrix = mat4.create();
         mat4.translate(mMatrix, mMatrix, position);
-        mat4.rotate(mMatrix, mMatrix, angle * index, vec3.set(vec3.create(), 1, 1, 0));
+        // mat4.rotate(mMatrix, mMatrix, angle * index, vec3.set(vec3.create(), 1, 1, 0));
         mMatrixItem1.data = mMatrix;
         mMatrixItem1.apply();
         vao.draw(program1, index === 0);

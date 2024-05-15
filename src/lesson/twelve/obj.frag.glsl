@@ -49,7 +49,7 @@ void main() {
     float intensity = clamp((angle - light.outCutOff) / (light.cutOff - light.outCutOff), 0.0, 1.0);
 
     float distance = length(v_camera_position - a_frag_position);
-    float attenuation = 1.0;// 1.0f / (light.constant + light.linear * distance + light.quadratic * distance * distance);
+    float attenuation = 1.0f / (light.constant + light.linear * distance + light.quadratic * distance * distance);
 
     vec3 color = ambient_color + diff_color * intensity * attenuation + spec_color * intensity * attenuation;
 

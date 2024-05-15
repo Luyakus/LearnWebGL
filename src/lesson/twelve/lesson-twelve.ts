@@ -89,17 +89,17 @@ export async function lessonTwelveMain(canvas: HTMLCanvasElement) {
     gl.uniform1f
   );
 
-  let color = vec3.set(vec3.create(), 0.2, 0.5, 0.3);
+  let color = vec3.set(vec3.create(), 1, 1, 1);
 
   let lightAmbItem = new UniformItem(
     "light.ambient",
-    vec3.set(vec3.create(), color[0] * 0.5, color[1] * 0.5, color[2] *0.5),
+    vec3.set(vec3.create(), color[0] * 0.01, color[1] * 0.01, color[2] * 0.01),
     gl.uniform3fv
   );
 
   let lightDiffItem = new UniformItem(
     "light.diffuse",
-    vec3.set(vec3.create(), color[0] * 4, color[1] * 4, color[2] * 4),
+    vec3.set(vec3.create(), color[0], color[1], color[2]),
     gl.uniform3fv
   );
 
@@ -111,26 +111,25 @@ export async function lessonTwelveMain(canvas: HTMLCanvasElement) {
 
   let lightConstantItem = new UniformItem("light.constant", 1, gl.uniform1f);
 
-  let lightLinearItem = new UniformItem("light.linear", 0.09, gl.uniform1f);
+  let lightLinearItem = new UniformItem("light.linear", 0.0014, gl.uniform1f);
 
   let lightQuadraticItem = new UniformItem(
     "light.quadratic",
-    0.032,
+    0.000007,
     gl.uniform1f
   );
 
   let lightCutOffItem = new UniformItem(
     "light.cutOff",
-    Math.cos(degreesToRadians(12.5)),
+    Math.cos(degreesToRadians(5.5)),
     gl.uniform1f
   );
 
   let lightOutCutOffItem = new UniformItem(
     "light.outCutOff",
-    Math.cos(degreesToRadians(17.5)),
+    Math.cos(degreesToRadians(10.5)),
     gl.uniform1f
   );
-
 
   let program1 = new Program(
     new Shader(objVertSrc, gl.VERTEX_SHADER, gl).shader,
@@ -156,7 +155,7 @@ export async function lessonTwelveMain(canvas: HTMLCanvasElement) {
     lightLinearItem,
     lightQuadraticItem,
     lightCutOffItem,
-    lightOutCutOffItem
+    lightOutCutOffItem,
   ].forEach((item) => {
     item.attach(vao, program1, gl);
     item.apply();
@@ -188,9 +187,14 @@ export async function lessonTwelveMain(canvas: HTMLCanvasElement) {
 
     cubePosition.forEach((position, index) => {
       let mMatrix = mat4.create();
-    //   mat4.rotate()
+      //   mat4.rotate()
       mat4.translate(mMatrix, mMatrix, position);
-      mat4.rotate(mMatrix, mMatrix, angle * (index + 0), vec3.set(vec3.create(), 1, 1, 0));
+      mat4.rotate(
+        mMatrix,
+        mMatrix,
+        angle * (index + 1),
+        vec3.set(vec3.create(), 1, 1, 0)
+      );
       mMatrixItem1.data = mMatrix;
       mMatrixItem1.apply();
       vao.draw(program1, index == 0);

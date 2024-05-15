@@ -34,7 +34,8 @@ export class UniformItem extends Item {
   ) {
     super();
     this.name = name;
-    (this.data = data), (this.setter = setter);
+    this.data = data;
+    this.setter = setter;
   }
 
   apply() {
@@ -69,6 +70,9 @@ export class BufferItem extends Item {
     vao.bind();
     program.use();
     let location = gl.getAttribLocation(program.program, this.name);
+    if (location < 0) {
+      throw new Error(`获取 ${this.name} location 失败`);
+    }
     gl.enableVertexAttribArray(location);
     if (!this.buffer) {
       this.buffer = gl.createBuffer()!;
@@ -80,5 +84,39 @@ export class BufferItem extends Item {
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
     vao.unbind();
     program.unuse();
+  }
+}
+
+export class StructUniformItem extends Item {
+  constructor(public scope: string, public unifromItems: UniformItem[]) {
+    super();
+    this.scope = scope;
+    this.unifromItems = unifromItems;
+    this.unifromItems.forEach((item) => {
+      item.name = scope + item.name;
+      console.log(item.name);
+    });
+  }
+
+  item(name: string) {
+    let findItem = null;
+    this.unifromItems.forEach((item) => {
+      if (item.name.includes(name)) {
+        findItem = item;
+      }
+    })
+    return findItem;
+  }
+
+  attach(vao: VertexArray, program: Program, gl: WebGL2RenderingContext) {
+    super.attach(vao, program, gl);
+    this.unifromItems.forEach((item) => {
+      item.attach(vao, program, gl);
+    });
+  }
+
+  apply() {
+    super.apply();
+    this.unifromItems.forEach((item) => item.apply());
   }
 }

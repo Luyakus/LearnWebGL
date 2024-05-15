@@ -12,6 +12,7 @@ import { lessonNineMain } from "./lesson/nine/lesson-nine";
 import { lessonTenMain } from "./lesson/ten/lesson-ten";
 import { lessonElevenMain } from "./lesson/eleven/lesson-eleven";
 import { lessonTwelveMain } from "./lesson/twelve/lesson-twelve";
+import { lessonThirteenMain } from "./lesson/thirteen/lesson-thirteen";
 
 interface RouteItem {
   render: (canvas: HTMLCanvasElement) => void;
@@ -79,6 +80,11 @@ const routes: RouteItem[] = [
     render: lessonTwelveMain,
     path: "/lesson-twelve",
     title: "手电筒",
+  },
+  {
+    render: lessonThirteenMain,
+    path: "/lesson-thirteen",
+    title: "光照综合demo",
   },
 ];
 
