@@ -91,12 +91,13 @@ const routes: RouteItem[] = [
 function LessonOverview() {
   const navigate = useNavigate();
   return (
-    <div className="h-screen w-screen flex flex-row flex-wrap gap-4 content-start">
+    <div className="h-screen w-screen flex flex-row flex-wrap justify-between">
       {routes.map((route) => {
         return (
           <div
             key={route.path}
-            className="w-[500px] h-[282px]"
+            style={{"width":"32%"}}
+            className="h-[282px] mb-[20px]"
             onClick={() => {
               navigate(route.path);
             }}

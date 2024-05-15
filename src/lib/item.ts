@@ -94,7 +94,6 @@ export class StructUniformItem extends Item {
     this.unifromItems = unifromItems;
     this.unifromItems.forEach((item) => {
       item.name = scope + item.name;
-      console.log(item.name);
     });
   }
 
