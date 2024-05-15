@@ -35,7 +35,7 @@ export function lessonEightMain(canvas: HTMLCanvasElement) {
   );
 
   let lightPosition = vec3.create();
-  vec3.set(lightPosition, 1.2, 1.0, 10.0);
+  vec3.set(lightPosition, 1.2, 1.0, 1.0);
   let lightItem = new UniformItem(
     "v_light_position",
     lightPosition,
@@ -89,14 +89,6 @@ export function lessonEightMain(canvas: HTMLCanvasElement) {
   vec3.set(objColor, 1, 1, 1);
   let objColorItem = new UniformItem("obj_color", objColor, gl.uniform3fv);
 
-  let lightColor = vec3.create();
-  vec3.set(lightColor, 1, 1, 1);
-  let lightColorItem = new UniformItem(
-    "light_color",
-    lightColor,
-    gl.uniform3fv
-  );
-
   let cameraPosition = vec3.create();
   let cameraPositionItem = new UniformItem(
     "v_camera_position",
@@ -124,19 +116,21 @@ export function lessonEightMain(canvas: HTMLCanvasElement) {
 
   let materialShinItem = new UniformItem(
     "material.shininess",
-    256,
+    32,
     gl.uniform1f
   );
 
+  let color = vec3.set(vec3.create(), 1, 0, 0);
+
   let lightAmbItem = new UniformItem(
     "light.ambient",
-    vec3.set(vec3.create(), 1, 1, 1),
+    vec3.set(vec3.create(), color[0] * 0.2, color[1] * 0.2, color[2] * 0.2),
     gl.uniform3fv
   );
 
   let lightDiffItem = new UniformItem(
     "light.diffuse",
-    vec3.set(vec3.create(), 1, 1, 1),
+    vec3.set(vec3.create(), color[0] * 0.8, color[1] * 0.8, color[2] * 0.8),
     gl.uniform3fv
   );
 
@@ -145,6 +139,8 @@ export function lessonEightMain(canvas: HTMLCanvasElement) {
     vec3.set(vec3.create(), 1, 1, 1),
     gl.uniform3fv
   );
+
+  let lightColorItem = new UniformItem("light_color", vec3.create(), gl.uniform3fv);
 
   let program1 = new Program(
     new Shader(objVertSrc, gl.VERTEX_SHADER, gl).shader,
@@ -176,9 +172,6 @@ export function lessonEightMain(canvas: HTMLCanvasElement) {
   objColorItem.attach(vao, program1, gl);
   objColorItem.apply();
 
-  lightColorItem.attach(vao, program1, gl);
-  lightColorItem.apply();
-
   lightItem.attach(vao, program1, gl);
   lightItem.apply();
 
@@ -207,6 +200,8 @@ export function lessonEightMain(canvas: HTMLCanvasElement) {
   pMatrixItem.attach(vao, program2, gl);
   pMatrixItem.apply();
 
+  lightColorItem.attach(vao, program2, gl);
+
   vMatrixItem1.attach(vao, program1, gl!);
 
   let angle = 0;
@@ -226,21 +221,23 @@ export function lessonEightMain(canvas: HTMLCanvasElement) {
     cameraPositionItem.data = camera.position;
     cameraPositionItem.apply();
 
-    let value = 1;// Math.max(0.5, Math.sin(angle));
-    lightColorItem.data = vec3.set(
+    let value = Math.max(0.5, Math.sin(angle));
+    let color = vec3.set(
       vec3.create(),
       value,
-      value,
-      value
+      value * 0.3,
+      value * 0.7
     );
-    lightColorItem.attach(vao, program1, gl!);
-    lightColorItem.apply();
+    lightDiffItem.data = color;
+    lightDiffItem.attach(vao, program1, gl!);
+    lightDiffItem.apply();
     vao.draw(program1);
 
     vMatrixItem2.attach(vao, program2, gl!);
     vMatrixItem2.data = camera.cameraMatrix();
     vMatrixItem2.apply();
 
+    lightColorItem.data = color;
     lightColorItem.attach(vao, program2, gl!);
     lightColorItem.apply();
 

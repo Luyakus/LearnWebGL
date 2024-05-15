@@ -71,14 +71,6 @@ export async function lessonTenMain(canvas: HTMLCanvasElement) {
     gl.uniformMatrix4fv(location, false, value);
   });
 
-  let lightColor = vec3.create();
-  vec3.set(lightColor, 1, 1, 1);
-  let lightColorItem = new UniformItem(
-    "light_color",
-    lightColor,
-    gl.uniform3fv
-  );
-
   let cameraPosition = vec3.create();
   let cameraPositionItem = new UniformItem(
     "v_camera_position",
@@ -99,15 +91,17 @@ export async function lessonTenMain(canvas: HTMLCanvasElement) {
     gl.uniform1f
   );
 
+  let color = vec3.set(vec3.create(), 0.7, 0.5, 0.5);
+
   let lightAmbItem = new UniformItem(
     "light.ambient",
-    vec3.set(vec3.create(), 1, 1, 1),
+    vec3.set(vec3.create(), color[0] * 0.2, color[1] * 0.2, color[2] * 0.2),
     gl.uniform3fv
   );
 
   let lightDiffItem = new UniformItem(
     "light.diffuse",
-    vec3.set(vec3.create(), 1, 1, 1),
+    vec3.set(vec3.create(), color[0] * 0.8, color[1] * 0.8, color[2] * 0.8),
     gl.uniform3fv
   );
 
@@ -140,9 +134,6 @@ export async function lessonTenMain(canvas: HTMLCanvasElement) {
 
   pMatrixItem.attach(vao, program1, gl);
   pMatrixItem.apply();
-
-  lightColorItem.attach(vao, program1, gl);
-  lightColorItem.apply();
 
   lightItem.attach(vao, program1, gl);
   lightItem.apply();
@@ -178,8 +169,8 @@ export async function lessonTenMain(canvas: HTMLCanvasElement) {
 
     cubePosition.forEach((position, index) => {
         let mMatrix = mat4.create();
-        mat4.rotate(mMatrix, mMatrix, angle * index, vec3.set(vec3.create(), 1, 1, 0));
         mat4.translate(mMatrix, mMatrix, position);
+        mat4.rotate(mMatrix, mMatrix, angle * index, vec3.set(vec3.create(), 1, 1, 0));
         mMatrixItem1.data = mMatrix;
         mMatrixItem1.apply();
         vao.draw(program1, index === 0);

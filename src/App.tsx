@@ -11,6 +11,7 @@ import { lessonEightMain } from "./lesson/eight/lesson-eight";
 import { lessonNineMain } from "./lesson/nine/lesson-nine";
 import { lessonTenMain } from "./lesson/ten/lesson-ten";
 import { lessonElevenMain } from "./lesson/eleven/lesson-eleven";
+import { lessonTwelveMain } from "./lesson/twelve/lesson-twelve";
 
 interface RouteItem {
   render: (canvas: HTMLCanvasElement) => void;
@@ -73,6 +74,11 @@ const routes: RouteItem[] = [
     render: lessonElevenMain,
     path: "/lesson-eleven",
     title: "投光物-点光源衰减-多物体",
+  },
+  {
+    render: lessonTwelveMain,
+    path: "/lesson-twelve",
+    title: "手电筒",
   },
 ];
 

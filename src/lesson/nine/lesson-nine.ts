@@ -43,7 +43,7 @@ export async function lessonNineMain(canvas: HTMLCanvasElement) {
   );
 
   let lightPosition = vec3.create();
-  vec3.set(lightPosition, 1.2, 1.0, 10.0);
+  vec3.set(lightPosition, 1.2, 1.0, 1.0);
   let lightItem = new UniformItem(
     "v_light_position",
     lightPosition,
@@ -93,14 +93,6 @@ export async function lessonNineMain(canvas: HTMLCanvasElement) {
     gl.uniformMatrix4fv(location, false, value);
   });
 
-  let lightColor = vec3.create();
-  vec3.set(lightColor, 1, 1, 1);
-  let lightColorItem = new UniformItem(
-    "light_color",
-    lightColor,
-    gl.uniform3fv
-  );
-
   let cameraPosition = vec3.create();
   let cameraPositionItem = new UniformItem(
     "v_camera_position",
@@ -121,15 +113,17 @@ export async function lessonNineMain(canvas: HTMLCanvasElement) {
     gl.uniform1f
   );
 
+  let color = vec3.set(vec3.create(), 0.8, 1, 0.1);
+
   let lightAmbItem = new UniformItem(
     "light.ambient",
-    vec3.set(vec3.create(), 1, 1, 1),
+    vec3.set(vec3.create(), color[0] * 0.2, color[1] * 0.2, color[2] * 0.2),
     gl.uniform3fv
   );
 
   let lightDiffItem = new UniformItem(
     "light.diffuse",
-    vec3.set(vec3.create(), 1, 1, 1),
+    vec3.set(vec3.create(), color[0] * 0.8, color[1] * 0.8, color[2] * 0.8),
     gl.uniform3fv
   );
 
@@ -138,6 +132,8 @@ export async function lessonNineMain(canvas: HTMLCanvasElement) {
     vec3.set(vec3.create(), 1, 1, 1),
     gl.uniform3fv
   );
+
+  let lightColorItem = new UniformItem("light_color", color, gl.uniform3fv);
 
   let program1 = new Program(
     new Shader(objVertSrc, gl.VERTEX_SHADER, gl).shader,
@@ -169,9 +165,6 @@ export async function lessonNineMain(canvas: HTMLCanvasElement) {
   pMatrixItem.attach(vao, program1, gl);
   pMatrixItem.apply();
 
-  lightColorItem.attach(vao, program1, gl);
-  lightColorItem.apply();
-
   lightItem.attach(vao, program1, gl);
   lightItem.apply();
 
@@ -198,7 +191,7 @@ export async function lessonNineMain(canvas: HTMLCanvasElement) {
   pMatrixItem.attach(vao, program2, gl);
   pMatrixItem.apply();
 
-  lightColorItem.attach(vao, program2, gl!);
+  lightColorItem.attach(vao, program2, gl);
   lightColorItem.apply();
 
   vMatrixItem1.attach(vao, program1, gl!);
