@@ -13,6 +13,7 @@ import { lessonTenMain } from "./lesson/ten/lesson-ten";
 import { lessonElevenMain } from "./lesson/eleven/lesson-eleven";
 import { lessonTwelveMain } from "./lesson/twelve/lesson-twelve";
 import { lessonThirteenMain } from "./lesson/thirteen/lesson-thirteen";
+import { lessonFourteenMain } from "./lesson/fourteen/lesson-fourteen";
 
 interface RouteItem {
   render: (canvas: HTMLCanvasElement) => void;
@@ -86,12 +87,17 @@ const routes: RouteItem[] = [
     path: "/lesson-thirteen",
     title: "光照综合demo",
   },
+  {
+    render: lessonFourteenMain,
+    path: "/lesson-fourteen",
+    title: "加载模型",
+  },
 ];
 
 function LessonOverview() {
   const navigate = useNavigate();
   return (
-    <div className="h-screen w-screen flex flex-row flex-wrap justify-between">
+    <div className="h-screen w-screen flex flex-row flex-wrap justify-start gap-4">
       {routes.map((route) => {
         return (
           <div

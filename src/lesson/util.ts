@@ -1,3 +1,5 @@
+import * as OBJ from "webgl-obj-loader";
+
 export interface GLResult<T> {
   message?: string;
   data?: T;
@@ -65,4 +67,10 @@ export function createProgram(
 
 export function degreesToRadians(degrees: number) {
   return degrees * Math.PI / 180;
+}
+
+export function createMeshs(mesh: OBJ.Mesh ) {
+  mesh.materialNames.forEach(name => {
+    
+  })
 }

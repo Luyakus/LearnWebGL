@@ -1,7 +1,7 @@
 import { Program } from "./program";
 import { VertexArray } from "./vertexarray";
 
-abstract class Item {
+export abstract class Item {
   vao?: VertexArray;
   program?: Program;
   gl?: WebGL2RenderingContext;
@@ -54,12 +54,14 @@ export class BufferItem extends Item {
   constructor(
     public name: string,
     public width: number,
-    public data: Float32Array
+    public data: Float32Array,
+    public elementItem?: ElementItem
   ) {
     super();
     this.name = name;
     this.data = data;
     this.width = width;
+    this.elementItem = elementItem;
   }
 
   apply() {
@@ -73,17 +75,43 @@ export class BufferItem extends Item {
     if (location < 0) {
       throw new Error(`获取 ${this.name} location 失败`);
     }
-    gl.enableVertexAttribArray(location);
     if (!this.buffer) {
       this.buffer = gl.createBuffer()!;
     }
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
     gl.bufferData(gl.ARRAY_BUFFER, this.data, gl.STATIC_DRAW);
+    if (this.elementItem) {
+      this.elementItem.attach(vao, program, gl);
+      this.elementItem.apply();
+    }
     gl.vertexAttribPointer(location, this.width, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(location);
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
+    if (this.elementItem) {
+      // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+    }
     vao.unbind();
     program.unuse();
+  }
+}
+
+export class ElementItem extends Item {
+  buffer?: WebGLBuffer;
+  constructor(public data: Uint16Array) {
+    super();
+    this.data = data;
+    console.log(this.data);
+  }
+
+  apply(): void {
+    super.apply();
+    let gl = this.gl!;
+    if (!this.buffer) {
+      this.buffer = gl.createBuffer()!;
+    }
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.data, gl.STATIC_DRAW);
   }
 }
 

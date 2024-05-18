@@ -39,7 +39,17 @@ export class VertexArray {
         this.gl.clear(this.gl.DEPTH_BUFFER_BIT | this.gl.COLOR_BUFFER_BIT);
       }
       this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
-      this.gl.drawArrays(this.gl.TRIANGLES, 0, this.vertexCount);
+      this.gl.drawElements(this.gl.TRIANGLES, this.vertexCount, this.gl.UNSIGNED_SHORT, 0);
+      // console.log('22222');
+      // let buffer = this.gl.getParameter(this.gl.ELEMENT_ARRAY_BUFFER_BINDING);
+      // // console.log("```````````", buffer);
+      // if (buffer) {
+      //   console.log("绑定了 ELEMENT_ARRAY_BUFFER");
+      //   this.gl.drawElements(this.gl.TRIANGLES, this.vertexCount, this.gl.UNSIGNED_INT, 0);
+      // } else {
+        // this.gl.drawArrays(this.gl.TRIANGLES, 0, this.vertexCount);
+      // }
+
     }
     frameBuffer?.unbind();
     this.unbind();

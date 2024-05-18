@@ -3,7 +3,7 @@
     "target": "ES2020",
     "useDefineForClassFields": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
+    "module": "ES2015",
     "skipLibCheck": true,
 
     /* Bundler mode */
@@ -19,9 +19,12 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
+    "allowJs": true,
+    "checkJs": false,
+
   
   
   },
-  "include": ["src", "node_modules/webgl-strict-types/index.d.ts"],
+  "include": ["src", "node_modules/webgl-strict-types/index.d.ts", "assimpjs.js"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
