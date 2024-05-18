@@ -26,30 +26,40 @@ export class VertexArray {
     this.bind();
     program.use();
     this.gl.enable(this.gl.DEPTH_TEST);
+    let buffer = this.gl.getParameter(this.gl.ELEMENT_ARRAY_BUFFER_BINDING);
     if (frameBuffer) {
       frameBuffer.bind();
       if (clear) {
         this.gl.clearColor(0.1, 0.2, 0.3, 1);
         this.gl.clear(this.gl.DEPTH_BUFFER_BIT | this.gl.COLOR_BUFFER_BIT);
       }
-      this.gl.drawArrays(this.gl.TRIANGLES, 0, this.vertexCount);
+      this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
+      if (buffer) {
+        this.gl.drawElements(
+          this.gl.TRIANGLES,
+          this.vertexCount,
+          this.gl.UNSIGNED_SHORT,
+          0
+        );
+      } else {
+        this.gl.drawArrays(this.gl.TRIANGLES, 0, this.vertexCount);
+      }
     } else {
       if (clear) {
         this.gl.clearColor(0.1, 0.2, 0.3, 1);
         this.gl.clear(this.gl.DEPTH_BUFFER_BIT | this.gl.COLOR_BUFFER_BIT);
       }
       this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
-      this.gl.drawElements(this.gl.TRIANGLES, this.vertexCount, this.gl.UNSIGNED_SHORT, 0);
-      // console.log('22222');
-      // let buffer = this.gl.getParameter(this.gl.ELEMENT_ARRAY_BUFFER_BINDING);
-      // // console.log("```````````", buffer);
-      // if (buffer) {
-      //   console.log("绑定了 ELEMENT_ARRAY_BUFFER");
-      //   this.gl.drawElements(this.gl.TRIANGLES, this.vertexCount, this.gl.UNSIGNED_INT, 0);
-      // } else {
-        // this.gl.drawArrays(this.gl.TRIANGLES, 0, this.vertexCount);
-      // }
-
+      if (buffer) {
+        this.gl.drawElements(
+          this.gl.TRIANGLES,
+          this.vertexCount,
+          this.gl.UNSIGNED_SHORT,
+          0
+        );
+      } else {
+        this.gl.drawArrays(this.gl.TRIANGLES, 0, this.vertexCount);
+      }
     }
     frameBuffer?.unbind();
     this.unbind();

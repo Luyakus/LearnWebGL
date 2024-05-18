@@ -81,16 +81,10 @@ export class BufferItem extends Item {
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
     gl.bufferData(gl.ARRAY_BUFFER, this.data, gl.STATIC_DRAW);
-    if (this.elementItem) {
-      this.elementItem.attach(vao, program, gl);
-      this.elementItem.apply();
-    }
     gl.vertexAttribPointer(location, this.width, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(location);
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
-    if (this.elementItem) {
-      // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
-    }
+
     vao.unbind();
     program.unuse();
   }
@@ -101,17 +95,20 @@ export class ElementItem extends Item {
   constructor(public data: Uint16Array) {
     super();
     this.data = data;
-    console.log(this.data);
   }
 
   apply(): void {
     super.apply();
+    let vao = this.vao!;
     let gl = this.gl!;
     if (!this.buffer) {
       this.buffer = gl.createBuffer()!;
     }
+    vao.bind();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.data, gl.STATIC_DRAW);
+    vao.unbind();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
   }
 }
 
@@ -131,7 +128,7 @@ export class StructUniformItem extends Item {
       if (item.name.includes(name)) {
         findItem = item;
       }
-    })
+    });
     return findItem;
   }
 
