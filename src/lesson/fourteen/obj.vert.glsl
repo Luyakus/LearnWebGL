@@ -9,5 +9,5 @@ uniform mat4x4 p_matrix;
 
 void main() {
     gl_Position = p_matrix * v_matrix * m_matrix * vec4(v_position, 1);
-    a_texcoord = v_texcoord;
+    a_texcoord = vec2(v_texcoord.x, -v_texcoord.y);
 }

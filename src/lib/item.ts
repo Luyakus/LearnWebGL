@@ -80,7 +80,7 @@ export class BufferItem extends Item {
     }
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, this.data, gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, this.data, gl.STATIC_DRAW, 0, this.data.length);
     gl.vertexAttribPointer(location, this.width, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(location);
     gl.bindBuffer(gl.ARRAY_BUFFER, null);

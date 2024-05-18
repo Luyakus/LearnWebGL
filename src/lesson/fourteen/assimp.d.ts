@@ -13,15 +13,15 @@ declare module Assimpjs {
 
   interface Mesh {
     faces: number[3][];
-    meterialIndex: number;
+    materialindex: number;
     name: string;
     normals: number[];
-    texturecoords: number[];
+    texturecoords: number[][];
     vertices: number[];
   }
 
   interface Scene {
-    meterials: Meterial[];
-    meshes:Mesh[];
+    materials: Meterial[];
+    meshes: Mesh[];
   }
 }

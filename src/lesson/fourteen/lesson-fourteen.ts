@@ -1,6 +1,6 @@
-// import objPath from "../../assets/nanosuit/nanosuit.obj";
-import objPath from "../../assets/diablo3/diablo3.obj";
-import png from "../../assets/diablo3/diablo3.png";
+import objPath from "../../assets/nanosuit/nanosuit.obj";
+// import objPath from "../../assets/diablo3/diablo3.obj";
+
 import mtlPath from "../../assets/nanosuit/nanosuit.mtl";
 import { fileLoader } from "../../lib/fileloader";
 import { VertexArray } from "../../lib/vertexarray";
@@ -27,19 +27,18 @@ export async function lessonFourteenMain(canvas: HTMLCanvasElement) {
 
   let objRes = await fileLoader(objPath);
   let mtlRes = await fileLoader(mtlPath);
-  let image = await imageLoader(png);
 
   if (!objRes || !mtlRes) {
     return;
   }
   const objBuffer = new Uint8Array(await objRes.arrayBuffer());
-  // const mtlBuffer = new Uint8Array(await mtlRes.arrayBuffer());
+  const mtlBuffer = new Uint8Array(await mtlRes.arrayBuffer());
 
   //@ts-ignore
   let ajs = await assimpjs();
   let fileList = new ajs.FileList();
   fileList.AddFile(objPath, objBuffer);
-  // fileList.AddFile(mtlPath, mtlBuffer);
+  fileList.AddFile(mtlPath, mtlBuffer);
   let result = ajs.ConvertFileList(fileList, "assjson");
   if (!result.IsSuccess() || result.FileCount() == 0) {
     console.log("obj 文件解析错误");
@@ -50,8 +49,8 @@ export async function lessonFourteenMain(canvas: HTMLCanvasElement) {
   let jsonContent = new TextDecoder().decode(resultFile.GetContent());
 
   // parse the result json
-  let resultJson: Assimpjs.Scene = JSON.parse(jsonContent);
-  console.log(resultJson);
+  let scene: Assimpjs.Scene = JSON.parse(jsonContent);
+  console.log(scene);
 
   let mMatrixItem = new UniformItem(
     "m_matrix",
@@ -64,7 +63,7 @@ export async function lessonFourteenMain(canvas: HTMLCanvasElement) {
   let vMatrix = mat4.create();
   mat4.lookAt(
     vMatrix,
-    vec3.set(vec3.create(), 0, 0, 15),
+    vec3.set(vec3.create(), 0, 0, 30),
     vec3.set(vec3.create(), 0, 0, 0),
     vec3.set(vec3.create(), 0, 1, 0)
   );
@@ -83,8 +82,9 @@ export async function lessonFourteenMain(canvas: HTMLCanvasElement) {
   let pMatrixItem = new UniformItem("p_matrix", pMatrix, (location, value) => {
     gl.uniformMatrix4fv(location, false, value);
   });
-  let meshes: Mesh[] = [];
-  resultJson.meshes.forEach((m) => {
+  let meshes: { [k in string]: Mesh } = {};
+  let textures: { [k in string]: Texture[] } = {};
+  for (const m of scene.meshes) {
     let vao = new VertexArray(m.faces.length * 3, gl);
     let program = new Program(
       new Shader(vertSrc, gl.VERTEX_SHADER, gl).shader,
@@ -92,58 +92,101 @@ export async function lessonFourteenMain(canvas: HTMLCanvasElement) {
       gl
     );
     let mesh = new Mesh(vao, program, gl);
+
     let vertexBufferItem = new BufferItem(
       "v_position",
       3,
       new Float32Array(m.vertices)
     );
-    let texcoordBufferItem = new BufferItem("v_texcoord", 2, new Float32Array(m.texturecoords));
 
-    let textureItem = new UniformItem("texture0", 0, gl.uniform1i);
+    let texcoordBufferItem = new BufferItem(
+      "v_texcoord",
+      2,
+      new Float32Array(m.texturecoords[0])
+    );
+
+    let difTextureItem = new UniformItem("dif_texture", 0, gl.uniform1i);
+    let specTextureItem = new UniformItem("spec_texture", 1, gl.uniform1i);
 
     let elementBufferItem = new ElementItem(
       new Uint16Array(m.faces.flatMap((face) => face))
     );
 
-
     mesh.appendItem(vertexBufferItem);
+    mesh.appendItem(texcoordBufferItem);
     mesh.appendItem(elementBufferItem);
-    // mesh.appendItem(texcoordBufferItem);
-    mesh.appendItem(textureItem);
+    mesh.appendItem(difTextureItem);
+    mesh.appendItem(specTextureItem);
     mesh.appendItem(mMatrixItem);
     mesh.appendItem(vMatrixItem);
     mesh.appendItem(pMatrixItem);
     mesh.applyItem();
-    meshes.push(mesh);
-  });
+    meshes[m.name] = mesh;
 
-  let texture0 = new Texture(image, gl);
-  texture0.active(0);
+    let difTextureName = scene.materials[m.materialindex].properties.find(
+      (p) => {
+        return p.semantic === 1 && p.type === 3;
+      }
+    )?.value as string;
+    if (difTextureName) {
+      let image = await imageLoader(`/src/assets/nanosuit/${difTextureName}`);
+      if (!textures[m.name]) {
+        textures[m.name] = [];
+      }
+      textures[m.name].push(new Texture(image, gl));
+    }
+    console.log(difTextureName, m.name, "1111");
+
+    let specTextureName = scene.materials[m.materialindex].properties.find(
+      (p) => {
+        return p.semantic === 2 && p.type === 3;
+      }
+    )?.value as string;
+    console.log(specTextureName, m.name, "2222");
+
+
+    if (specTextureName) {
+      let image = await imageLoader(`/src/assets/nanosuit/${specTextureName}`);
+      if (!textures[m.name]) {
+        textures[m.name] = [];
+      }
+      textures[m.name].push(new Texture(image, gl));
+    }
+  }
 
   let angle = 0;
   let lastTime = 0;
   let camera = new Camera(canvas);
-  console.log(meshes.length);
+
   function draw(time: number) {
     camera.move((time - lastTime) / 1000);
-
-    meshes.forEach((mesh, index) => {
-      if (index === 0) {
-        let mMatrix = mat4.create();
-        mat4.rotate(
-          mMatrix,
-          mMatrix,
-          degreesToRadians(angle),
-          vec3.set(vec3.create(), 0, 1, 0)
-        );
-        mMatrixItem.data = mMatrix;
-        mMatrixItem.apply();
-        vMatrixItem.data = camera.cameraMatrix();
-        vMatrixItem.apply();
-        mesh.draw(index == 0);
+    Object.keys(meshes).forEach((key, index) => {
+      try {
+        textures[key].forEach((t, index) => {
+          t.active(index);
+        });
+      } catch (error) {
+        console.log(key, "3333");
+        return;
       }
+
+      let mesh = meshes[key];
+      let mMatrix = mat4.create();
+      mat4.rotate(
+        mMatrix,
+        mMatrix,
+        degreesToRadians(angle),
+        vec3.set(vec3.create(), 0, 1, 0)
+      );
+      mMatrixItem.data = mMatrix;
+      mMatrixItem.attach(mesh.vao, mesh.program, gl!);
+      mMatrixItem.apply();
+      vMatrixItem.data = camera.cameraMatrix();
+      vMatrixItem.attach(mesh.vao, mesh.program, gl!);
+      vMatrixItem.apply();
+      mesh.draw(index == 0);
     });
-    angle += 0.1;
+    // angle += 0.1;
     lastTime = time;
     requestAnimationFrame(draw);
   }
