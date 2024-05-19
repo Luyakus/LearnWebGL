@@ -602,6 +602,10 @@ video {
   width: 100vw;
 }
 
+.w-\[500px\] {
+  width: 500px;
+}
+
 .resize {
   resize: both;
 }
@@ -614,8 +618,16 @@ video {
   flex-wrap: wrap;
 }
 
+.content-start {
+  align-content: flex-start;
+}
+
 .justify-start {
   justify-content: flex-start;
+}
+
+.justify-between {
+  justify-content: space-between;
 }
 
 .gap-4 {

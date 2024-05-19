@@ -33,7 +33,6 @@ export class VertexArray {
         this.gl.clearColor(0.1, 0.2, 0.3, 1);
         this.gl.clear(this.gl.DEPTH_BUFFER_BIT | this.gl.COLOR_BUFFER_BIT);
       }
-      this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
       if (buffer) {
         this.gl.drawElements(
           this.gl.TRIANGLES,
