@@ -1,7 +1,10 @@
 import objPath from "../../assets/nanosuit/nanosuit.obj";
 // import objPath from "../../assets/diablo3/diablo3.obj";
+// import objPath from "../../assets/skull/skull.obj"
 
 import mtlPath from "../../assets/nanosuit/nanosuit.mtl";
+// import mtlPath from "../../assets/skull/skull.mtl";
+
 import { fileLoader } from "../../lib/fileloader";
 import { VertexArray } from "../../lib/vertexarray";
 import { Program } from "../../lib/program";
@@ -9,7 +12,12 @@ import { Shader } from "../../lib/shader";
 import vertSrc from "./obj.vert.glsl";
 import fragSrc from "./obj.frag.glsl";
 import { Mesh } from "../../lib/mesh";
-import { BufferItem, ElementItem, UniformItem } from "../../lib/item";
+import {
+  BufferItem,
+  ElementItem,
+  StructUniformItem,
+  UniformItem,
+} from "../../lib/item";
 import { mat4, vec3 } from "gl-matrix";
 import { degreesToRadians } from "../util";
 import { Camera } from "../../lib/camera";
@@ -52,6 +60,7 @@ export async function lessonFourteenMain(canvas: HTMLCanvasElement) {
   let scene: Assimpjs.Scene = JSON.parse(jsonContent);
   console.log(scene);
 
+  let camera = new Camera(canvas);
   let mMatrixItem = new UniformItem(
     "m_matrix",
     mat4.create(),
@@ -63,7 +72,7 @@ export async function lessonFourteenMain(canvas: HTMLCanvasElement) {
   let vMatrix = mat4.create();
   mat4.lookAt(
     vMatrix,
-    vec3.set(vec3.create(), 0, 0, 30),
+    vec3.set(vec3.create(), 0, 0, 3),
     vec3.set(vec3.create(), 0, 0, 0),
     vec3.set(vec3.create(), 0, 1, 0)
   );
@@ -82,6 +91,37 @@ export async function lessonFourteenMain(canvas: HTMLCanvasElement) {
   let pMatrixItem = new UniformItem("p_matrix", pMatrix, (location, value) => {
     gl.uniformMatrix4fv(location, false, value);
   });
+
+  let lightItem = new StructUniformItem("light", [
+    new UniformItem(
+      ".ambient",
+      vec3.set(vec3.create(), 0.1, 0.1, 0.1),
+      gl.uniform3fv
+    ),
+    new UniformItem(
+      ".diffuse",
+      vec3.set(vec3.create(), 0, 1, 0.8),
+      gl.uniform3fv
+    ),
+    new UniformItem(
+      ".ambient",
+      vec3.set(vec3.create(), 1, 1, 1),
+      gl.uniform3fv
+    ),
+    new UniformItem(
+      ".direction",
+      vec3.set(vec3.create(), 0, 0, -1),
+      gl.uniform3fv
+    ),
+  ]);
+
+  let shininessItem = new UniformItem("shininess", 32, gl.uniform1f);
+  let cameraPositionItem = new UniformItem(
+    "camera_position",
+    camera.position,
+    gl.uniform3fv
+  );
+
   let meshes: { [k in string]: Mesh } = {};
   let textures: { [k in string]: Texture[] } = {};
   for (const m of scene.meshes) {
@@ -96,13 +136,19 @@ export async function lessonFourteenMain(canvas: HTMLCanvasElement) {
     let vertexBufferItem = new BufferItem(
       "v_position",
       3,
-      new Float32Array(m.vertices)
+      new Float32Array(m.vertices.map((vertex) => vertex * 0.1))
     );
 
     let texcoordBufferItem = new BufferItem(
       "v_texcoord",
       2,
       new Float32Array(m.texturecoords[0])
+    );
+
+    let normalBufferItem = new BufferItem(
+      "v_normal",
+      3,
+      new Float32Array(m.normals)
     );
 
     let difTextureItem = new UniformItem("dif_texture", 0, gl.uniform1i);
@@ -114,22 +160,27 @@ export async function lessonFourteenMain(canvas: HTMLCanvasElement) {
 
     mesh.appendItem(vertexBufferItem);
     mesh.appendItem(texcoordBufferItem);
+    mesh.appendItem(normalBufferItem);
     mesh.appendItem(elementBufferItem);
     mesh.appendItem(difTextureItem);
     mesh.appendItem(specTextureItem);
+    mesh.appendItem(shininessItem);
+    mesh.appendItem(lightItem);
+    mesh.appendItem(cameraPositionItem);
     mesh.appendItem(mMatrixItem);
     mesh.appendItem(vMatrixItem);
     mesh.appendItem(pMatrixItem);
     mesh.applyItem();
     meshes[m.name] = mesh;
-
+    let path = objPath.substring(0, objPath.lastIndexOf("/"));
+    console.log(path);
     let difTextureName = scene.materials[m.materialindex].properties.find(
       (p) => {
         return p.semantic === 1 && p.type === 3;
       }
     )?.value as string;
     if (difTextureName) {
-      let image = await imageLoader(`/src/assets/nanosuit/${difTextureName}`);
+      let image = await imageLoader(`${path}/${difTextureName}`);
       if (!textures[m.name]) {
         textures[m.name] = [];
       }
@@ -144,9 +195,8 @@ export async function lessonFourteenMain(canvas: HTMLCanvasElement) {
     )?.value as string;
     console.log(specTextureName, m.name, "2222");
 
-
     if (specTextureName) {
-      let image = await imageLoader(`/src/assets/nanosuit/${specTextureName}`);
+      let image = await imageLoader(`${path}/${specTextureName}`);
       if (!textures[m.name]) {
         textures[m.name] = [];
       }
@@ -156,7 +206,6 @@ export async function lessonFourteenMain(canvas: HTMLCanvasElement) {
 
   let angle = 0;
   let lastTime = 0;
-  let camera = new Camera(canvas);
 
   function draw(time: number) {
     camera.move((time - lastTime) / 1000);
@@ -178,15 +227,19 @@ export async function lessonFourteenMain(canvas: HTMLCanvasElement) {
         degreesToRadians(angle),
         vec3.set(vec3.create(), 0, 1, 0)
       );
+      mat4.translate(mMatrix, mMatrix, vec3.set(vec3.create(), 0, -0.5, 0));
       mMatrixItem.data = mMatrix;
       mMatrixItem.attach(mesh.vao, mesh.program, gl!);
       mMatrixItem.apply();
       vMatrixItem.data = camera.cameraMatrix();
       vMatrixItem.attach(mesh.vao, mesh.program, gl!);
       vMatrixItem.apply();
+      cameraPositionItem.data = camera.position;
+      cameraPositionItem.attach(mesh.vao, mesh.program, gl!);
+      cameraPositionItem.apply();
       mesh.draw(index == 0);
     });
-    // angle += 0.1;
+    angle += 0.1;
     lastTime = time;
     requestAnimationFrame(draw);
   }
