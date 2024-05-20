@@ -37,7 +37,7 @@ export class Mesh {
     });
   }
 
-  draw(clear?: boolean) {
+  draw(clear: boolean) {
     if (!this.vao) {
       throw new Error("没有设置 vao");
     }
@@ -46,6 +46,6 @@ export class Mesh {
     }
     let vao = this.vao;
     let program = this.program!;
-    vao.draw(program, clear);
+    vao.draw({program, clear});
   }
 }

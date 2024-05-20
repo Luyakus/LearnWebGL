@@ -9,4 +9,7 @@ import topLevelAwait from "vite-plugin-top-level-await";
 export default defineConfig({
   plugins: [glsl(), react()],
   assetsInclude: ["**/*.obj", "**/*.mtl", "**/*.blend", "**/*.wasm"],
+  server: {
+    host: "0.0.0.0"
+  }
 });

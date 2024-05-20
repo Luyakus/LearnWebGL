@@ -12,8 +12,8 @@ import lightFragSrc from "./light.frag.glsl";
 
 import {
   cubeVertex,
-  textureVertex,
-  directVertex,
+  cubeTextureVertex,
+  cubeDirectVertex,
   cubePosition,
   lightPosition,
 } from "../cube";
@@ -48,8 +48,8 @@ export async function lessonThirteenMain(canvas: HTMLCanvasElement) {
   );
 
   let cubeItem = new BufferItem("v_position", 3, cubeVertex);
-  let texcoordItem = new BufferItem("v_texcoord", 2, textureVertex);
-  let normalItem = new BufferItem("v_normal", 3, directVertex);
+  let texcoordItem = new BufferItem("v_texcoord", 2, cubeTextureVertex);
+  let normalItem = new BufferItem("v_normal", 3, cubeDirectVertex);
 
   let texture1 = new Texture(image1, gl);
   let texture2 = new Texture(image2, gl);
@@ -90,7 +90,12 @@ export async function lessonThirteenMain(canvas: HTMLCanvasElement) {
 
   let colors: vec3[] = [];
   let createColor = () => {
-    return vec3.set(vec3.create(), Math.random() > 0.5 ? 1 : 0, Math.random(), Math.random() > 0.5 ? 1 : 0);
+    return vec3.set(
+      vec3.create(),
+      Math.random() > 0.5 ? 1 : 0,
+      Math.random(),
+      Math.random() > 0.5 ? 1 : 0
+    );
   };
 
   lightPosition.forEach((position, index) => {
@@ -246,7 +251,7 @@ export async function lessonThirteenMain(canvas: HTMLCanvasElement) {
       mMatrixItem.data = mMatrix;
       mMatrixItem.attach(vao, program1, gl!);
       mMatrixItem.apply();
-      vao.draw(program1, index === 0);
+      vao.draw({ program: program1, clear: index === 0 });
     });
 
     vMatrixItem.attach(vao, program2, gl!);
@@ -264,7 +269,7 @@ export async function lessonThirteenMain(canvas: HTMLCanvasElement) {
       lightColorItem.attach(vao, program2, gl!);
       lightColorItem.data = colors[index];
       lightColorItem.apply();
-      vao.draw(program2, false);
+      vao.draw({ program: program2, clear: false });
     });
     angle += 0.01;
     lastime = time;

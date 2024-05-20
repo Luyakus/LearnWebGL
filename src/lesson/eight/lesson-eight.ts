@@ -1,6 +1,6 @@
 import { mat4, vec3 } from "gl-matrix";
 import { BufferItem, UniformItem } from "../../lib/item";
-import { cubeVertex, directVertex } from "../cube";
+import { cubeVertex, cubeDirectVertex } from "../cube";
 import { Program } from "../../lib/program";
 import { Shader } from "../../lib/shader";
 
@@ -23,7 +23,7 @@ export function lessonEightMain(canvas: HTMLCanvasElement) {
   canvas.height = canvas.clientHeight * 3;
 
   let cubeBufferItem = new BufferItem("v_position", 3, cubeVertex);
-  let directionBufferItem = new BufferItem("v_normal", 3, directVertex);
+  let directionBufferItem = new BufferItem("v_normal", 3, cubeDirectVertex);
 
   let mMatrix1 = mat4.create();
   let mMatrixItem1 = new UniformItem(
@@ -104,7 +104,7 @@ export function lessonEightMain(canvas: HTMLCanvasElement) {
 
   let materialDiffItem = new UniformItem(
     "material.diffuse",
-    vec3.set(vec3.create(),  0.0, 0.50980392, 0.50980392),
+    vec3.set(vec3.create(), 0.0, 0.50980392, 0.50980392),
     gl.uniform3fv
   );
 
@@ -140,7 +140,11 @@ export function lessonEightMain(canvas: HTMLCanvasElement) {
     gl.uniform3fv
   );
 
-  let lightColorItem = new UniformItem("light_color", vec3.create(), gl.uniform3fv);
+  let lightColorItem = new UniformItem(
+    "light_color",
+    vec3.create(),
+    gl.uniform3fv
+  );
 
   let program1 = new Program(
     new Shader(objVertSrc, gl.VERTEX_SHADER, gl).shader,
@@ -222,16 +226,11 @@ export function lessonEightMain(canvas: HTMLCanvasElement) {
     cameraPositionItem.apply();
 
     let value = Math.max(0.5, Math.sin(angle));
-    let color = vec3.set(
-      vec3.create(),
-      value,
-      value * 0.3,
-      value * 0.7
-    );
+    let color = vec3.set(vec3.create(), value, value * 0.3, value * 0.7);
     lightDiffItem.data = color;
     lightDiffItem.attach(vao, program1, gl!);
     lightDiffItem.apply();
-    vao.draw(program1);
+    vao.draw({ program: program1, clear: true });
 
     vMatrixItem2.attach(vao, program2, gl!);
     vMatrixItem2.data = camera.cameraMatrix();
@@ -241,7 +240,7 @@ export function lessonEightMain(canvas: HTMLCanvasElement) {
     lightColorItem.attach(vao, program2, gl!);
     lightColorItem.apply();
 
-    vao.draw(program2, false);
+    vao.draw({ program: program2, clear: false });
     lastime = time;
     angle += 0.01;
     requestAnimationFrame(draw);

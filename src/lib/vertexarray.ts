@@ -1,6 +1,13 @@
 import { FrameBuffer } from "./framebuffer";
 import { Program } from "./program";
 
+interface DrawContext {
+  program: Program;
+  clear: boolean;
+  frameBuffer?: FrameBuffer;
+  glConfig?: () => void;
+}
+
 export class VertexArray {
   vao: WebGLVertexArrayObject;
 
@@ -22,7 +29,11 @@ export class VertexArray {
     this.gl.bindVertexArray(null);
   }
 
-  draw(program: Program, clear: boolean = true, frameBuffer?: FrameBuffer) {
+  draw(context: DrawContext) {
+    let program = context.program;
+    let frameBuffer = context.frameBuffer;
+    let clear = context.clear;
+    let glConfig = context.glConfig;
     this.bind();
     program.use();
     this.gl.enable(this.gl.DEPTH_TEST);
@@ -33,6 +44,7 @@ export class VertexArray {
         this.gl.clearColor(0.1, 0.2, 0.3, 1);
         this.gl.clear(this.gl.DEPTH_BUFFER_BIT | this.gl.COLOR_BUFFER_BIT);
       }
+      glConfig && glConfig();
       if (buffer) {
         this.gl.drawElements(
           this.gl.TRIANGLES,
@@ -49,6 +61,7 @@ export class VertexArray {
         this.gl.clear(this.gl.DEPTH_BUFFER_BIT | this.gl.COLOR_BUFFER_BIT);
       }
       this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
+      glConfig && glConfig();
       if (buffer) {
         this.gl.drawElements(
           this.gl.TRIANGLES,

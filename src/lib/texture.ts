@@ -1,8 +1,8 @@
 export class Texture {
   texture: WebGLTexture;
   gl: WebGL2RenderingContext;
-  image?: HTMLImageElement;
-  constructor(image: HTMLImageElement, gl: WebGL2RenderingContext) {
+  image: HTMLImageElement;
+  constructor(image: HTMLImageElement, gl: WebGL2RenderingContext, textureConfig?: ()=>void) {
     let texture = gl.createTexture();
     if (!texture) {
       throw new Error(`创建纹理失败, src: ${image.src}`);
@@ -12,7 +12,7 @@ export class Texture {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-
+    textureConfig && textureConfig();
     gl.texImage2D(
       gl.TEXTURE_2D,
       0,

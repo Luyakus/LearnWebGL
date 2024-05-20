@@ -1,7 +1,7 @@
 import * as Matrix from "gl-matrix";
 import { imageLoader } from "../../lib/imageloader";
 import { VertexArray } from "../../lib/vertexarray";
-import { cubeVertex, textureVertex } from "../cube";
+import { cubeVertex, cubeTextureVertex } from "../cube";
 import { Texture } from "../../lib/texture";
 import png1 from "../../assets/1.png";
 import png2 from "../../assets/2.png";
@@ -52,9 +52,9 @@ export async function lessonFiveMain(canvas: HTMLCanvasElement) {
     );
 
     let coordEnd = coordStep * (i + 1);
-    let subCoord = textureVertex.subarray(
+    let subCoord = cubeTextureVertex.subarray(
       i * coordStep,
-      coordEnd <= textureVertex.length ? coordEnd : textureVertex.length
+      coordEnd <= cubeTextureVertex.length ? coordEnd : cubeTextureVertex.length
     );
     let vao = new VertexArray(subCube.length / 3, gl);
     let program = new Program(
@@ -127,7 +127,7 @@ export async function lessonFiveMain(canvas: HTMLCanvasElement) {
         // 2, 5
         texture3.active(index);
       }
-      vaos[index].draw(programs[index], index == 0);
+      vaos[index].draw({ program: programs[index], clear: index == 0 });
     });
     requestAnimationFrame(draw);
   }

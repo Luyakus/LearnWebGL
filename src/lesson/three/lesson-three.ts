@@ -48,12 +48,12 @@ export async function lessonThreeMain(canvas: HTMLCanvasElement) {
   texcoordBuffer.attach(vao, program, gl);
   texcoordBuffer.apply();
 
-  let texture1 =  new Texture(image, gl);
+  let texture1 = new Texture(image, gl);
   let textureItem = new UniformItem("u_image", 0, gl.uniform1i);
   textureItem.attach(vao, program, gl);
   textureItem.apply();
   texture1.active(0);
-  vao.draw(program, true,frameBuffer);
+  vao.draw({ program, clear: true, frameBuffer });
 
   let program1 = new Program(
     new Shader(vertSrc, gl.VERTEX_SHADER, gl).shader,
@@ -71,7 +71,7 @@ export async function lessonThreeMain(canvas: HTMLCanvasElement) {
   textureItem.attach(vao, program1, gl);
   textureItem.apply();
   frameBuffer.texture.active(0);
-  vao.draw(program1, true, frameBuffer1);
+  vao.draw({ program: program1, clear: true, frameBuffer: frameBuffer1 });
 
   let program2 = new Program(
     new Shader(vertSrc, gl.VERTEX_SHADER, gl).shader,
@@ -85,5 +85,5 @@ export async function lessonThreeMain(canvas: HTMLCanvasElement) {
   textureItem.attach(vao, program2, gl);
   textureItem.apply();
   frameBuffer1.texture.active(0);
-  vao.draw(program2);
+  vao.draw({ program: program2, clear: true });
 }

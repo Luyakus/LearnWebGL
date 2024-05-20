@@ -1,6 +1,11 @@
 import { mat4, vec3 } from "gl-matrix";
 import { BufferItem, UniformItem } from "../../lib/item";
-import { cubeVertex, directVertex, textureVertex, cubePosition } from "../cube";
+import {
+  cubeVertex,
+  cubeDirectVertex,
+  cubeTextureVertex,
+  cubePosition,
+} from "../cube";
 import { Program } from "../../lib/program";
 import { Shader } from "../../lib/shader";
 
@@ -28,8 +33,8 @@ export async function lessonTenMain(canvas: HTMLCanvasElement) {
   canvas.height = canvas.clientHeight * 3;
 
   let cubeBufferItem = new BufferItem("v_position", 3, cubeVertex);
-  let directionBufferItem = new BufferItem("v_normal", 3, directVertex);
-  let texcoordBufferItem = new BufferItem("v_texcoord", 2, textureVertex);
+  let directionBufferItem = new BufferItem("v_normal", 3, cubeDirectVertex);
+  let texcoordBufferItem = new BufferItem("v_texcoord", 2, cubeTextureVertex);
 
   let mMatrix1 = mat4.create();
   let mMatrixItem1 = new UniformItem(
@@ -168,13 +173,13 @@ export async function lessonTenMain(canvas: HTMLCanvasElement) {
     texture2.active(2);
 
     cubePosition.forEach((position, index) => {
-        let mMatrix = mat4.create();
-        mat4.translate(mMatrix, mMatrix, position);
-        // mat4.rotate(mMatrix, mMatrix, angle * index, vec3.set(vec3.create(), 1, 1, 0));
-        mMatrixItem1.data = mMatrix;
-        mMatrixItem1.apply();
-        vao.draw(program1, index === 0);
-    })
+      let mMatrix = mat4.create();
+      mat4.translate(mMatrix, mMatrix, position);
+      // mat4.rotate(mMatrix, mMatrix, angle * index, vec3.set(vec3.create(), 1, 1, 0));
+      mMatrixItem1.data = mMatrix;
+      mMatrixItem1.apply();
+      vao.draw({ program: program1, clear: index === 0 });
+    });
 
     lastime = time;
     angle += 0.01;

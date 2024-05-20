@@ -1,6 +1,11 @@
 import { mat4, vec3 } from "gl-matrix";
 import { BufferItem, UniformItem } from "../../lib/item";
-import { cubeVertex, directVertex, textureVertex, cubePosition } from "../cube";
+import {
+  cubeVertex,
+  cubeDirectVertex,
+  cubeTextureVertex,
+  cubePosition,
+} from "../cube";
 import { Program } from "../../lib/program";
 import { Shader } from "../../lib/shader";
 
@@ -30,8 +35,8 @@ export async function lessonElevenMain(canvas: HTMLCanvasElement) {
   canvas.height = canvas.clientHeight * 3;
 
   let cubeBufferItem = new BufferItem("v_position", 3, cubeVertex);
-  let directionBufferItem = new BufferItem("v_normal", 3, directVertex);
-  let texcoordBufferItem = new BufferItem("v_texcoord", 2, textureVertex);
+  let directionBufferItem = new BufferItem("v_normal", 3, cubeDirectVertex);
+  let texcoordBufferItem = new BufferItem("v_texcoord", 2, cubeTextureVertex);
 
   let mMatrix1 = mat4.create();
   let mMatrixItem1 = new UniformItem(
@@ -218,7 +223,7 @@ export async function lessonElevenMain(canvas: HTMLCanvasElement) {
     vMatrixItem2.attach(vao, program2, gl!);
     vMatrixItem2.data = camera.cameraMatrix();
     vMatrixItem2.apply();
-    vao.draw(program2);
+    vao.draw({ program: program2, clear: true });
     // return;
     vMatrixItem1.data = camera.cameraMatrix();
     vMatrixItem1.apply();
@@ -238,7 +243,7 @@ export async function lessonElevenMain(canvas: HTMLCanvasElement) {
       );
       mMatrixItem1.data = mMatrix;
       mMatrixItem1.apply();
-      vao.draw(program1, false);
+      vao.draw({ program: program1, clear: false });
     });
     lastime = time;
     angle += 0.01;

@@ -11,7 +11,7 @@ export const cubeVertex = new Float32Array([
   0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5,
 ]);
 
-export const textureVertex = new Float32Array([
+export const cubeTextureVertex = new Float32Array([
   0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
   0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
   0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0,
@@ -19,7 +19,7 @@ export const textureVertex = new Float32Array([
   0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
 ]);
 
-export const directVertex = new Float32Array([
+export const cubeDirectVertex = new Float32Array([
   0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0,
   -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0,
   1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0,
@@ -29,6 +29,42 @@ export const directVertex = new Float32Array([
   -1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0,
   1.0, 0.0, 0.0, 1.0, 0.0,
 ]);
+
+export const floorVertex = new Float32Array([
+  5.0, -0.5, 5.0, -5.0, -0.5, 5.0, -5.0, -0.5, -5.0, 5.0, -0.5, 5.0, -5.0, -0.5,
+  -5.0, 5.0, -0.5, -5.0,
+]);
+
+export const floorTextureVertex = new Float32Array([
+  2.0, 0.0, 0.0, 0.0, 0.0, 2.0, 2.0, 0.0, 0.0, 2.0, 2.0, 2.0,
+]);
+
+export const grassVertex = new Float32Array([
+  // positions         // texture Coords (swapped y coordinates because texture is flipped upside down)
+  0.0,
+  0.5, 0.0, 0.0, -0.5, 0.0, 1.0, -0.5, 0.0, 0.0, 0.5, 0.0, 1.0, -0.5, 0.0, 1.0,
+  0.5, 0.0,
+]);
+
+export const grassTextureVertex = new Float32Array([
+  0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0,
+]);
+
+export const grassPosition = [
+  vec3.set(vec3.create(), -1.5, 0.0, -0.48),
+  vec3.set(vec3.create(), 1.5, 0.0, 0.51),
+  vec3.set(vec3.create(), 0.0, 0.0, 0.7),
+  vec3.set(vec3.create(), -0.3, 0.0, -2.3),
+  vec3.set(vec3.create(), 0.5, 0.0, -0.6),
+];
+
+export const widowPosition = [
+  vec3.set(vec3.create(), -1.5, 0.0, -0.08),
+  vec3.set(vec3.create(), 1.5, 0.0, 0.81),
+  vec3.set(vec3.create(), 0.0, 0.0, 1),
+  vec3.set(vec3.create(), -0.3, 0.0, -2.0),
+  vec3.set(vec3.create(), 0.5, 0.0, -0.3),
+];
 
 export const cubePosition = [
   vec3.set(vec3.create(), 0, 0, 0),

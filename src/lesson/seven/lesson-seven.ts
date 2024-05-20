@@ -1,6 +1,6 @@
-import { mat4, vec3} from "gl-matrix";
+import { mat4, vec3 } from "gl-matrix";
 import { BufferItem, UniformItem } from "../../lib/item";
-import { cubeVertex, directVertex } from "../cube";
+import { cubeVertex, cubeDirectVertex } from "../cube";
 import { Program } from "../../lib/program";
 import { Shader } from "../../lib/shader";
 
@@ -23,7 +23,7 @@ export function lessonSevenMain(canvas: HTMLCanvasElement) {
   canvas.height = canvas.clientHeight * 3;
 
   let cubeBufferItem = new BufferItem("v_position", 3, cubeVertex);
-  let directionBufferItem = new BufferItem("v_normal", 3, directVertex);
+  let directionBufferItem = new BufferItem("v_normal", 3, cubeDirectVertex);
 
   let mMatrix1 = mat4.create();
   let mMatrixItem1 = new UniformItem(
@@ -157,25 +157,23 @@ export function lessonSevenMain(canvas: HTMLCanvasElement) {
     camera.move((time - lastime) / 1000);
 
     let mMatrix = mat4.create();
-    mat4.rotate(mMatrix, mMatrix, angle, vec3.set(vec3.create(), 1, 1, 0))
+    mat4.rotate(mMatrix, mMatrix, angle, vec3.set(vec3.create(), 1, 1, 0));
     mMatrixItem1.data = mMatrix;
     mMatrixItem1.apply();
-
-
 
     vMatrixItem.data = camera.cameraMatrix();
     vMatrixItem.apply();
 
     cameraPositionItem.data = camera.position;
     cameraPositionItem.apply();
-    vao.draw(program1);
+    vao.draw({ program: program1, clear: true });
 
     vMatrixItem1.attach(vao, program2, gl!);
     vMatrixItem1.data = camera.cameraMatrix();
     vMatrixItem1.apply();
-    vao.draw(program2, false);
+    vao.draw({ program: program2, clear: false });
     lastime = time;
-    angle += 0.05
+    angle += 0.05;
     requestAnimationFrame(draw);
   }
   draw(0);

@@ -1,6 +1,6 @@
 import { BufferItem, UniformItem } from "../../lib/item";
 import { VertexArray } from "../../lib/vertexarray";
-import { cubeVertex, textureVertex } from "../cube";
+import { cubeVertex, cubeTextureVertex } from "../cube";
 import png from "../../assets/1.png";
 import { imageLoader } from "../../lib/imageloader";
 import { Texture } from "../../lib/texture";
@@ -85,7 +85,7 @@ export async function lessonSixMain(canvas: HTMLCanvasElement) {
       3,
       cubeVertex.map((value) => value * 0.3)
     ),
-    new BufferItem("v_texcoord", 2, textureVertex),
+    new BufferItem("v_texcoord", 2, cubeTextureVertex),
     new UniformItem("u_image", 0, gl.uniform1i),
     pMatrixItem,
   ].forEach((item) => {
@@ -103,13 +103,13 @@ export async function lessonSixMain(canvas: HTMLCanvasElement) {
     vMatrixItem.apply();
 
     mMatrixItem.apply();
-    vao.draw(program);
+    vao.draw({ program, clear: true });
 
     mMatrixItem1.apply();
-    vao.draw(program, false);
+    vao.draw({ program, clear: false });
 
     mMatrixItem2.apply();
-    vao.draw(program, false);
+    vao.draw({ program, clear: false });
     lastime = time;
     requestAnimationFrame(draw);
   }

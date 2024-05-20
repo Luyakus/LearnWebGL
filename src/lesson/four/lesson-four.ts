@@ -50,5 +50,5 @@ export async function lessonFourMain(canvas: HTMLCanvasElement) {
   });
   texture1.active(0);
   texture2.active(1);
-  vao.draw(program);
+  vao.draw({program, clear: true});
 }
