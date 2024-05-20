@@ -95,22 +95,22 @@ export async function lessonFourteenMain(canvas: HTMLCanvasElement) {
   let lightItem = new StructUniformItem("light", [
     new UniformItem(
       ".ambient",
-      vec3.set(vec3.create(), 0.1, 0.1, 0.1),
+      vec3.set(vec3.create(), 0.5, 0.5, 0.5),
       gl.uniform3fv
     ),
     new UniformItem(
       ".diffuse",
-      vec3.set(vec3.create(), 0, 1, 0.8),
+      vec3.set(vec3.create(), 0.8, 0.8, 0.8),
       gl.uniform3fv
     ),
     new UniformItem(
-      ".ambient",
+      ".specular",
       vec3.set(vec3.create(), 1, 1, 1),
       gl.uniform3fv
     ),
     new UniformItem(
       ".direction",
-      vec3.set(vec3.create(), 0, 0, -1),
+      vec3.set(vec3.create(), -1, -1, -1),
       gl.uniform3fv
     ),
   ]);
@@ -173,7 +173,6 @@ export async function lessonFourteenMain(canvas: HTMLCanvasElement) {
     mesh.applyItem();
     meshes[m.name] = mesh;
     let path = objPath.substring(0, objPath.lastIndexOf("/"));
-    console.log(path);
     let difTextureName = scene.materials[m.materialindex].properties.find(
       (p) => {
         return p.semantic === 1 && p.type === 3;
@@ -186,14 +185,12 @@ export async function lessonFourteenMain(canvas: HTMLCanvasElement) {
       }
       textures[m.name].push(new Texture(image, gl));
     }
-    console.log(difTextureName, m.name, "1111");
 
     let specTextureName = scene.materials[m.materialindex].properties.find(
       (p) => {
         return p.semantic === 2 && p.type === 3;
       }
     )?.value as string;
-    console.log(specTextureName, m.name, "2222");
 
     if (specTextureName) {
       let image = await imageLoader(`${path}/${specTextureName}`);
@@ -210,15 +207,9 @@ export async function lessonFourteenMain(canvas: HTMLCanvasElement) {
   function draw(time: number) {
     camera.move((time - lastTime) / 1000);
     Object.keys(meshes).forEach((key, index) => {
-      try {
-        textures[key].forEach((t, index) => {
-          t.active(index);
-        });
-      } catch (error) {
-        console.log(key, "3333");
-        return;
-      }
-
+      textures[key].forEach((t, index) => {
+        t.active(index);
+      });
       let mesh = meshes[key];
       let mMatrix = mat4.create();
       mat4.rotate(
@@ -239,7 +230,7 @@ export async function lessonFourteenMain(canvas: HTMLCanvasElement) {
       cameraPositionItem.apply();
       mesh.draw(index == 0);
     });
-    angle += 0.1;
+    angle += 2;
     lastTime = time;
     requestAnimationFrame(draw);
   }
