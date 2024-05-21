@@ -214,9 +214,8 @@ export async function lessonFifteenMain(canvas: HTMLCanvasElement) {
         vec3.distance(eyePosition, a.position)
       );
     });
-// console.log(positions);
+
   positions.forEach((p) => {
-    console.log(p);
     let mMarix = mat4.create();
     if (p.type === "window") {
       mMatrixItem.data = mat4.translate(mMarix, mMarix, p.position);

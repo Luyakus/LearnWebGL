@@ -15,6 +15,7 @@ import { lessonTwelveMain } from "./lesson/twelve/lesson-twelve";
 import { lessonThirteenMain } from "./lesson/thirteen/lesson-thirteen";
 import { lessonFourteenMain } from "./lesson/fourteen/lesson-fourteen";
 import { lessonFifteenMain } from "./lesson/fifteen/lesson-fifteen";
+import { lessonSixteenMain } from "./lesson/sixteen/lesson-sixteen";
 
 interface RouteItem {
   render: (canvas: HTMLCanvasElement) => void;
@@ -23,36 +24,36 @@ interface RouteItem {
 }
 
 const routes: RouteItem[] = [
-  // {
-  //   render: lessonOneMain,
-  //   path: "/lesson-one",
-  //   title: "简单使用 webgl2",
-  // },
-  // {
-  //   render: lessonTwoMain,
-  //   path: "/lesson-two",
-  //   title: "加载纹理",
-  // },
-  // {
-  //   render: lessonThreeMain,
-  //   path: "/lesson-three",
-  //   title: "滤镜",
-  // },
-  // {
-  //   render: lessonFourMain,
-  //   path: "/lesson-four",
-  //   title: "多个纹理",
-  // },
-  // {
-  //   render: lessonFiveMain,
-  //   path: "/lesson-five",
-  //   title: "多个 program 使用多个纹理",
-  // },
-  // {
-  //   render: lessonSixMain,
-  //   path: "/lesson-six",
-  //   title: "摄像机",
-  // },
+  {
+    render: lessonOneMain,
+    path: "/lesson-one",
+    title: "简单使用 webgl2",
+  },
+  {
+    render: lessonTwoMain,
+    path: "/lesson-two",
+    title: "加载纹理",
+  },
+  {
+    render: lessonThreeMain,
+    path: "/lesson-three",
+    title: "滤镜",
+  },
+  {
+    render: lessonFourMain,
+    path: "/lesson-four",
+    title: "多个纹理",
+  },
+  {
+    render: lessonFiveMain,
+    path: "/lesson-five",
+    title: "多个 program 使用多个纹理",
+  },
+  {
+    render: lessonSixMain,
+    path: "/lesson-six",
+    title: "摄像机",
+  },
   {
     render: lessonSevenMain,
     path: "/lesson-seven",
@@ -98,6 +99,12 @@ const routes: RouteItem[] = [
     path: "/lesson-fifteen",
     title: "混合",
   },
+  {
+    render: lessonSixteenMain,
+    path: "/lesson-sixteen",
+    title: "天空盒+环境贴图",
+  },
+  
 ];
 
 function LessonOverview() {

@@ -1,8 +1,11 @@
-import objPath from "../../assets/nanosuit/nanosuit.obj";
+// import objPath from "../../assets/nanosuit/nanosuit.obj";
+// import mtlPath from "../../assets/nanosuit/nanosuit.mtl";
+import objPath from "../../assets/nanosuit_reflection/nanosuit.obj";
+import mtlPath from "../../assets/nanosuit_reflection/nanosuit.mtl";
+
 // import objPath from "../../assets/diablo3/diablo3.obj";
 // import objPath from "../../assets/skull/skull.obj"
 
-import mtlPath from "../../assets/nanosuit/nanosuit.mtl";
 // import mtlPath from "../../assets/skull/skull.mtl";
 
 import { fileLoader } from "../../lib/fileloader";
