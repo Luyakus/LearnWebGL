@@ -5,7 +5,8 @@ export abstract class Item {
   vao?: VertexArray;
   program?: Program;
   gl?: WebGL2RenderingContext;
-
+  data: any;
+  name?: string;
   constructor() {}
   attach(vao: VertexArray, program: Program, gl: WebGL2RenderingContext) {
     this.vao = vao;
@@ -23,6 +24,7 @@ export abstract class Item {
     if (!this.vao) {
       throw new Error("vao 为空");
     }
+    this.program.registItem(this);
   }
 }
 
@@ -54,14 +56,12 @@ export class BufferItem extends Item {
   constructor(
     public name: string,
     public width: number,
-    public data: Float32Array,
-    public elementItem?: ElementItem
+    public data: Float32Array
   ) {
     super();
     this.name = name;
     this.data = data;
     this.width = width;
-    this.elementItem = elementItem;
   }
 
   apply() {
@@ -80,11 +80,73 @@ export class BufferItem extends Item {
     }
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, this.data, gl.STATIC_DRAW, 0, this.data.length);
+    gl.bufferData(
+      gl.ARRAY_BUFFER,
+      this.data,
+      gl.STATIC_DRAW,
+      0,
+      this.data.length
+    );
     gl.vertexAttribPointer(location, this.width, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(location);
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
+    vao.unbind();
+    program.unuse();
+  }
+}
+
+export class InstaceBufferItem extends Item {
+  buffer?: WebGLBuffer;
+  constructor(
+    public name: string,
+    public width: number,
+    public height: number,
+    public data: Float32Array
+  ) {
+    super();
+    this.name = name;
+    this.data = data;
+    this.width = width;
+    this.height = height;
+  }
+
+  apply() {
+    super.apply();
+    let vao = this.vao!;
+    let program = this.program!;
+    let gl = this.gl!;
+    vao.bind();
+    program.use();
+    let location = gl.getAttribLocation(program.program, this.name);
+    if (location < 0) {
+      throw new Error(`获取 ${this.name} location 失败`);
+    }
+    if (!this.buffer) {
+      this.buffer = gl.createBuffer()!;
+    }
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
+    gl.bufferData(
+      gl.ARRAY_BUFFER,
+      this.data,
+      gl.STATIC_DRAW,
+      0,
+      this.data.length
+    );
+    for (let i = 0; i < this.height; i++) {
+      gl.vertexAttribPointer(
+        location + i,
+        this.width,
+        gl.FLOAT,
+        false,
+        4 * this.width * this.height,
+        4 * this.width * i
+      );
+      gl.enableVertexAttribArray(location + i);
+      gl.vertexAttribDivisor(location + i, 1);
+    }
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
     vao.unbind();
     program.unuse();
   }

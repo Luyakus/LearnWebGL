@@ -231,7 +231,7 @@ export async function lessonFourteenMain(canvas: HTMLCanvasElement) {
       cameraPositionItem.data = camera.position;
       cameraPositionItem.attach(mesh.vao, mesh.program, gl!);
       cameraPositionItem.apply();
-      mesh.draw(index == 0);
+      mesh.vao.draw({program: mesh.program, clear: index === 0}); 
     });
     angle += 2;
     lastTime = time;

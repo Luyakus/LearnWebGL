@@ -4,6 +4,7 @@ import { Program } from "./program";
 interface DrawContext {
   program: Program;
   clear: boolean;
+  instaceCount?: number;
   frameBuffer?: FrameBuffer;
   glConfig?: () => void;
 }
@@ -40,34 +41,38 @@ export class VertexArray {
     let buffer = this.gl.getParameter(this.gl.ELEMENT_ARRAY_BUFFER_BINDING);
     if (frameBuffer) {
       frameBuffer.bind();
-      if (clear) {
-        this.gl.clearColor(0.1, 0.2, 0.3, 1);
-        this.gl.clear(this.gl.DEPTH_BUFFER_BIT | this.gl.COLOR_BUFFER_BIT);
-      }
-      glConfig && glConfig();
-      if (buffer) {
+    } else {
+      this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
+    }
+    if (clear) {
+      this.gl.clearColor(0.1, 0.2, 0.3, 1);
+      this.gl.clear(this.gl.DEPTH_BUFFER_BIT | this.gl.COLOR_BUFFER_BIT);
+    }
+    glConfig && glConfig();
+    if (buffer) {
+      if (context.instaceCount) {
+        this.gl.drawElementsInstanced(
+          this.gl.TRIANGLES,
+          this.vertexCount,
+          this.gl.UNSIGNED_SHORT,
+          0,
+          context.instaceCount
+        );
+      } else {
         this.gl.drawElements(
           this.gl.TRIANGLES,
           this.vertexCount,
           this.gl.UNSIGNED_SHORT,
           0
         );
-      } else {
-        this.gl.drawArrays(this.gl.TRIANGLES, 0, this.vertexCount);
       }
     } else {
-      if (clear) {
-        this.gl.clearColor(0.1, 0.2, 0.3, 1);
-        this.gl.clear(this.gl.DEPTH_BUFFER_BIT | this.gl.COLOR_BUFFER_BIT);
-      }
-      this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
-      glConfig && glConfig();
-      if (buffer) {
-        this.gl.drawElements(
+      if (context.instaceCount) {
+        this.gl.drawArraysInstanced(
           this.gl.TRIANGLES,
+          0,
           this.vertexCount,
-          this.gl.UNSIGNED_SHORT,
-          0
+          context.instaceCount
         );
       } else {
         this.gl.drawArrays(this.gl.TRIANGLES, 0, this.vertexCount);

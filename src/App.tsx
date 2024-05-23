@@ -16,6 +16,8 @@ import { lessonThirteenMain } from "./lesson/thirteen/lesson-thirteen";
 import { lessonFourteenMain } from "./lesson/fourteen/lesson-fourteen";
 import { lessonFifteenMain } from "./lesson/fifteen/lesson-fifteen";
 import { lessonSixteenMain } from "./lesson/sixteen/lesson-sixteen";
+import { lessonSeventeenMain } from "./lesson/seventeen/lesson-seventeen";
+import { lessonEighteenMain } from "./lesson/eighteen/lesson-eighteen";
 
 interface RouteItem {
   render: (canvas: HTMLCanvasElement) => void;
@@ -24,26 +26,26 @@ interface RouteItem {
 }
 
 const routes: RouteItem[] = [
-  {
-    render: lessonOneMain,
-    path: "/lesson-one",
-    title: "简单使用 webgl2",
-  },
-  {
-    render: lessonTwoMain,
-    path: "/lesson-two",
-    title: "加载纹理",
-  },
-  {
-    render: lessonThreeMain,
-    path: "/lesson-three",
-    title: "滤镜",
-  },
-  {
-    render: lessonFourMain,
-    path: "/lesson-four",
-    title: "多个纹理",
-  },
+  // {
+  //   render: lessonOneMain,
+  //   path: "/lesson-one",
+  //   title: "简单使用 webgl2",
+  // },
+  // {
+  //   render: lessonTwoMain,
+  //   path: "/lesson-two",
+  //   title: "加载纹理",
+  // },
+  // {
+  //   render: lessonThreeMain,
+  //   path: "/lesson-three",
+  //   title: "滤镜",
+  // },
+  // {
+  //   render: lessonFourMain,
+  //   path: "/lesson-four",
+  //   title: "多个纹理",
+  // },
   {
     render: lessonFiveMain,
     path: "/lesson-five",
@@ -104,7 +106,16 @@ const routes: RouteItem[] = [
     path: "/lesson-sixteen",
     title: "天空盒+环境贴图",
   },
-  
+  {
+    render: lessonSeventeenMain,
+    path: "/lesson-seventeen",
+    title: "实例化",
+  },
+  {
+    render: lessonEighteenMain,
+    path: "/lesson-eighteen",
+    title: "骨骼动画",
+  },
 ];
 
 function LessonOverview() {
@@ -115,7 +126,7 @@ function LessonOverview() {
         return (
           <div
             key={route.path}
-            style={{"width":"32%"}}
+            style={{ width: "32%" }}
             className="h-[282px] mb-[20px]"
             onClick={() => {
               navigate(route.path);
@@ -125,6 +136,10 @@ function LessonOverview() {
           </div>
         );
       })}
+      <p className="text-sky-400 bold">
+        故事到这里就结束了, 关于高级光照和PBR部分的内容已经不是入门内容了,
+        以后再细细研究
+      </p>
     </div>
   );
 }

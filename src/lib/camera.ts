@@ -2,7 +2,7 @@ import { mat4, vec3 } from "gl-matrix";
 import { degreesToRadians } from "../lesson/util";
 
 export class Camera {
-  position: vec3 = vec3.set(vec3.create(), 0, 0, 3);
+  position: vec3;
   front: vec3 = vec3.set(vec3.create(), 0, 0, -1);
   up: vec3 = vec3.set(vec3.create(), 0, 1, 0);
 
@@ -10,7 +10,8 @@ export class Camera {
   pitch = 0;
   keys: string[] = [];
 
-  constructor(canvas: HTMLCanvasElement) {
+  constructor(canvas: HTMLCanvasElement, position:vec3 = vec3.set(vec3.create(), 0, 0, 3)) {
+    this.position = position;
     if (window.innerWidth - canvas.getBoundingClientRect().width > 3) {
       return;
     }
