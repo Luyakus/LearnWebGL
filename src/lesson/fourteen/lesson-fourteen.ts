@@ -1,7 +1,9 @@
-// import objPath from "../../assets/nanosuit/nanosuit.obj";
-// import mtlPath from "../../assets/nanosuit/nanosuit.mtl";
-import objPath from "../../assets/nanosuit_reflection/nanosuit.obj";
-import mtlPath from "../../assets/nanosuit_reflection/nanosuit.mtl";
+import objPath from "../../assets/nanosuit/nanosuit.obj";
+import mtlPath from "../../assets/nanosuit/nanosuit.mtl";
+// import objPath from "../../assets/nanosuit_reflection/nanosuit.obj";
+// import mtlPath from "../../assets/nanosuit_reflection/nanosuit.mtl";
+// import objPath from "../../assets/Dq_Syabugyo/IndoorScene_Dq_Syabugyo.obj";
+// import mtlPath from "../../assets/Dq_Syabugyo/IndoorScene_Dq_Syabugyo.mtl";
 
 // import objPath from "../../assets/diablo3/diablo3.obj";
 // import objPath from "../../assets/skull/skull.obj"
@@ -128,79 +130,83 @@ export async function lessonFourteenMain(canvas: HTMLCanvasElement) {
   let meshes: { [k in string]: Mesh } = {};
   let textures: { [k in string]: Texture[] } = {};
   for (const m of scene.meshes) {
-    let vao = new VertexArray(m.faces.length * 3, gl);
-    let program = new Program(
-      new Shader(vertSrc, gl.VERTEX_SHADER, gl).shader,
-      new Shader(fragSrc, gl.FRAGMENT_SHADER, gl).shader,
-      gl
-    );
-    let mesh = new Mesh(vao, program, gl);
+    try {
+      let vao = new VertexArray(m.faces.length * 3, gl);
+      let program = new Program(
+        new Shader(vertSrc, gl.VERTEX_SHADER, gl).shader,
+        new Shader(fragSrc, gl.FRAGMENT_SHADER, gl).shader,
+        gl
+      );
+      let mesh = new Mesh(vao, program, gl);
 
-    let vertexBufferItem = new BufferItem(
-      "v_position",
-      3,
-      new Float32Array(m.vertices.map((vertex) => vertex * 0.1))
-    );
+      let vertexBufferItem = new BufferItem(
+        "v_position",
+        3,
+        new Float32Array(m.vertices.map((vertex) => vertex * 0.1))
+      );
 
-    let texcoordBufferItem = new BufferItem(
-      "v_texcoord",
-      2,
-      new Float32Array(m.texturecoords[0])
-    );
+      let texcoordBufferItem = new BufferItem(
+        "v_texcoord",
+        2,
+        new Float32Array(m.texturecoords[0])
+      );
 
-    let normalBufferItem = new BufferItem(
-      "v_normal",
-      3,
-      new Float32Array(m.normals)
-    );
+      let normalBufferItem = new BufferItem(
+        "v_normal",
+        3,
+        new Float32Array(m.normals)
+      );
 
-    let difTextureItem = new UniformItem("dif_texture", 0, gl.uniform1i);
-    let specTextureItem = new UniformItem("spec_texture", 1, gl.uniform1i);
+      let difTextureItem = new UniformItem("dif_texture", 0, gl.uniform1i);
+      let specTextureItem = new UniformItem("spec_texture", 1, gl.uniform1i);
 
-    let elementBufferItem = new ElementItem(
-      new Uint16Array(m.faces.flatMap((face) => face))
-    );
+      let elementBufferItem = new ElementItem(
+        new Uint16Array(m.faces.flatMap((face) => face))
+      );
 
-    mesh.appendItem(vertexBufferItem);
-    mesh.appendItem(texcoordBufferItem);
-    mesh.appendItem(normalBufferItem);
-    mesh.appendItem(elementBufferItem);
-    mesh.appendItem(difTextureItem);
-    mesh.appendItem(specTextureItem);
-    mesh.appendItem(shininessItem);
-    mesh.appendItem(lightItem);
-    mesh.appendItem(cameraPositionItem);
-    mesh.appendItem(mMatrixItem);
-    mesh.appendItem(vMatrixItem);
-    mesh.appendItem(pMatrixItem);
-    mesh.applyItem();
-    meshes[m.name] = mesh;
-    let path = objPath.substring(0, objPath.lastIndexOf("/"));
-    let difTextureName = scene.materials[m.materialindex].properties.find(
-      (p) => {
-        return p.semantic === 1 && p.type === 3;
+      mesh.appendItem(vertexBufferItem);
+      mesh.appendItem(texcoordBufferItem);
+      mesh.appendItem(normalBufferItem);
+      mesh.appendItem(elementBufferItem);
+      mesh.appendItem(difTextureItem);
+      mesh.appendItem(specTextureItem);
+      mesh.appendItem(shininessItem);
+      mesh.appendItem(lightItem);
+      mesh.appendItem(cameraPositionItem);
+      mesh.appendItem(mMatrixItem);
+      mesh.appendItem(vMatrixItem);
+      mesh.appendItem(pMatrixItem);
+      mesh.applyItem();
+      meshes[m.name] = mesh;
+      let path = objPath.substring(0, objPath.lastIndexOf("/"));
+      let difTextureName = scene.materials[m.materialindex].properties.find(
+        (p) => {
+          return p.semantic === 1 && p.type === 3;
+        }
+      )?.value as string;
+      if (difTextureName) {
+        let image = await imageLoader(`${path}/${difTextureName}`);
+        if (!textures[m.name]) {
+          textures[m.name] = [];
+        }
+        textures[m.name].push(new Texture(image, gl));
       }
-    )?.value as string;
-    if (difTextureName) {
-      let image = await imageLoader(`${path}/${difTextureName}`);
-      if (!textures[m.name]) {
-        textures[m.name] = [];
-      }
-      textures[m.name].push(new Texture(image, gl));
-    }
 
-    let specTextureName = scene.materials[m.materialindex].properties.find(
-      (p) => {
-        return p.semantic === 2 && p.type === 3;
-      }
-    )?.value as string;
+      let specTextureName = scene.materials[m.materialindex].properties.find(
+        (p) => {
+          return p.semantic === 2 && p.type === 3;
+        }
+      )?.value as string;
 
-    if (specTextureName) {
-      let image = await imageLoader(`${path}/${specTextureName}`);
-      if (!textures[m.name]) {
-        textures[m.name] = [];
+      if (specTextureName) {
+        let image = await imageLoader(`${path}/${specTextureName}`);
+        if (!textures[m.name]) {
+          textures[m.name] = [];
+        }
+        textures[m.name].push(new Texture(image, gl));
       }
-      textures[m.name].push(new Texture(image, gl));
+    } catch (error) {
+      console.log(m);
     }
   }
 
@@ -231,7 +237,7 @@ export async function lessonFourteenMain(canvas: HTMLCanvasElement) {
       cameraPositionItem.data = camera.position;
       cameraPositionItem.attach(mesh.vao, mesh.program, gl!);
       cameraPositionItem.apply();
-      mesh.vao.draw({program: mesh.program, clear: index === 0}); 
+      mesh.vao.draw({ program: mesh.program, clear: index === 0 });
     });
     angle += 2;
     lastTime = time;
