@@ -31,21 +31,21 @@ const routes: RouteItem[] = [
   //   path: "/lesson-one",
   //   title: "简单使用 webgl2",
   // },
-  // {
-  //   render: lessonTwoMain,
-  //   path: "/lesson-two",
-  //   title: "加载纹理",
-  // },
-  // {
-  //   render: lessonThreeMain,
-  //   path: "/lesson-three",
-  //   title: "滤镜",
-  // },
-  // {
-  //   render: lessonFourMain,
-  //   path: "/lesson-four",
-  //   title: "多个纹理",
-  // },
+  {
+    render: lessonTwoMain,
+    path: "/lesson-two",
+    title: "加载纹理",
+  },
+  {
+    render: lessonThreeMain,
+    path: "/lesson-three",
+    title: "滤镜",
+  },
+  {
+    render: lessonFourMain,
+    path: "/lesson-four",
+    title: "多个纹理",
+  },
   {
     render: lessonFiveMain,
     path: "/lesson-five",
@@ -111,11 +111,11 @@ const routes: RouteItem[] = [
     path: "/lesson-seventeen",
     title: "实例化",
   },
-  {
-    render: lessonEighteenMain,
-    path: "/lesson-eighteen",
-    title: "骨骼动画",
-  },
+  // {
+  //   render: lessonEighteenMain,
+  //   path: "/lesson-eighteen",
+  //   title: "骨骼动画",
+  // },
 ];
 
 function LessonOverview() {

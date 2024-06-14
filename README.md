@@ -1,30 +1,11 @@
-# React + TypeScript + Vite
+### webgl 的各种例子, 另外封装了一个轻量级工具包在 lib 文件夹下
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+#### 简单使用, 实现了滤镜, fps 风格摄像机, 绘制多个物体, 使用多个纹理
+![](./1.png)
 
-Currently, two official plugins are available:
+#### 材质 + 光照, 体会到 shader 的乐趣
+![](./2.png)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+#### 手动加载模型, 天空盒, 光照的复杂例子, 使用实例化绘制上万物体..陆毅4321千万不能
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+![](./3.png)
